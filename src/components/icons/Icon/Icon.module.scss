@@ -1,0 +1,19 @@
+@import "styles/vars";
+
+.icon {
+  display: inline-block;
+  flex-shrink: 0;
+  color: currentColor;
+
+  &_color_primary {
+    color: $icon_color-primary;
+  }
+
+  &_color_secondary {
+    color: $icon_color-secondary;
+  }
+
+  &_color_accent {
+    color: $icon_color-accent;
+  }
+}

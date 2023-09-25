@@ -1,56 +1,55 @@
-const path = require("path");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
-const ReactRefreshWebpackPlugin = require("@pmmmwh/react-refresh-webpack-plugin");
-const buildPath = path.resolve(__dirname, "dist");
-const srcPath = path.resolve(__dirname, "src");
-const isProd = process.env.NODE_ENV === "production";
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const TsCheckerPlugin = require("fork-ts-checker-webpack-plugin");
+const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
+const buildPath = path.resolve(__dirname, 'dist');
+const srcPath = path.resolve(__dirname, 'src');
+const isProd = process.env.NODE_ENV === 'production';
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const TsCheckerPlugin = require('fork-ts-checker-webpack-plugin');
 
 const getSettingsForStyles = (withModules = false) => {
   //Заменяем в нашей функции style-loader на mini-css-extract-plugin
   return [
     MiniCssExtractPlugin.loader,
     !withModules
-      ? "css-loader"
+      ? 'css-loader'
       : {
-          loader: "css-loader",
+          loader: 'css-loader',
           options: {
             modules: {
-              localIdentName: !isProd
-                ? "[path][name]__[local]"
-                : "[hash:base64]",
+              localIdentName: !isProd ? '[path][name]__[local]' : '[hash:base64]',
             },
           },
         },
     {
-      loader: "postcss-loader",
+      loader: 'postcss-loader',
       options: {
         postcssOptions: {
-          plugins: ["autoprefixer"],
+          plugins: ['autoprefixer'],
         },
       },
     },
-    "sass-loader",
+    'sass-loader',
   ];
 };
 module.exports = {
-  entry: path.join(srcPath, "index.tsx"),
-  target: !isProd ? "web" : "browserslist",
-  devtool: isProd ? "hidden-source-map" : "eval-source-map",
+  entry: path.join(srcPath, 'index.tsx'),
+  target: !isProd ? 'web' : 'browserslist',
+  devtool: isProd ? 'hidden-source-map' : 'eval-source-map',
   output: {
     path: buildPath,
-    filename: "bundle.js",
+    filename: 'bundle.js',
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: path.join(srcPath, "index.html"),
+      template: path.join(srcPath, 'index.html'),
     }),
     !isProd && new ReactRefreshWebpackPlugin(),
     new MiniCssExtractPlugin({
       // Для того чтобы файл со стилями не кэшировался в браузере добавим filename
-      filename: "[name]-[hash].css",
+      filename: '[name]-[hash].css',
     }),
+    new TsCheckerPlugin(),
   ].filter(Boolean),
   module: {
     rules: [
@@ -65,11 +64,11 @@ module.exports = {
       },
       {
         test: /\.[tj]sx?$/,
-        use: "babel-loader",
+        use: 'babel-loader',
       },
       {
         test: /\.(png|svg|jpg)$/,
-        type: "asset",
+        type: 'asset',
         parser: {
           dataUrlCondition: {
             maxSize: 10 * 1024,
@@ -79,13 +78,18 @@ module.exports = {
     ],
   },
   resolve: {
-    extensions: [".ts", ".js", ".tsx", ".jsx"],
+    extensions: ['.ts', '.js', '.tsx', '.jsx'],
     alias: {
-      components: path.join(srcPath, "components"),
+      '@components': path.resolve(__dirname, 'src/components'),
+      '@config': path.resolve(__dirname, 'src/config'),
+      '@styles': path.join(__dirname, 'src/config'),
+      '@utils': path.join(__dirname, 'src/utils'),
+      '@models': path.join(__dirname, 'src/models'),
+      '@store': path.join(__dirname, 'src/store'),
     },
   },
   devServer: {
-    host: "127.0.0.1",
+    host: '127.0.0.1',
     port: 3000,
     hot: true,
     historyApiFallback: true,

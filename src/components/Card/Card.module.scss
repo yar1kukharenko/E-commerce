@@ -1,0 +1,66 @@
+@import "styles/vars";
+
+.card {
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  max-width: 360px;
+  background-color: $card-bg;
+  transition: box-shadow 0.3s ease;
+  border-radius: $border-radius;
+  overflow: hidden;
+
+  &:hover {
+    box-shadow: $shadow;
+  }
+
+  &__header {
+    background-color: $card-image-bg;
+    position: relative;
+
+    &::after {
+      content: "";
+      padding-top: 100%;
+      display: block;
+    }
+
+    .img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+  }
+
+  &__body {
+    padding: $space-xl $space-xs;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+  }
+
+  &__caption {
+    margin-bottom: $space-xxs;
+  }
+
+  &__subtitle {
+    margin-top: $space-xxs;
+  }
+
+  &__footer {
+    align-items: center;
+    display: flex;
+    margin-top: $space-l;
+  }
+
+  &__action {
+    margin-left: auto;
+    padding-left: $space-xxs;
+  }
+}

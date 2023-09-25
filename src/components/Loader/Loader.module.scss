@@ -1,0 +1,32 @@
+@import "styles/vars";
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.loader {
+  color: $loader-bg;
+  animation: spin 1s linear infinite;
+
+}
+
+.loader-size-s {
+  width: 24px;
+  height: 24px;
+}
+
+.loader-size-m {
+  width: 48px;
+  height: 48px;
+}
+
+.loader-size-l {
+  width: 60px;
+  height: 60px;
+}
+

@@ -1,19 +1,15 @@
-import * as React from "react";
-import { createRoot } from "react-dom/client";
-import "regenerator-runtime";
+import * as React from 'react';
+import * as ReactDOM from 'react-dom/client';
+import * as Router from 'react-router-dom';
 
-const root = document.getElementById("root");
-if (!root) {
-  throw new Error("Root element not found");
-}
-const appRoot = createRoot(root);
+import App from './App';
+import 'styles/reset.scss';
+import 'config/configureMobX';
 
-appRoot.render(
-  <>
-    <div className={"global-title"}>React приложение</div>
-  </>,
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <React.StrictMode>
+    <Router.BrowserRouter>
+      <App />
+    </Router.BrowserRouter>
+  </React.StrictMode>,
 );
-
-if (module.hot) {
-  module.hot.accept();
-}

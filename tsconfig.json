@@ -2,7 +2,24 @@
   "compilerOptions": {
     "baseUrl": "src",
     "paths": {
-      "components": ["components"],
+      "@components/*": [
+        "src/components/*"
+      ],
+      "@config/*": [
+        "src/config/*"
+      ],
+      "@styles/*": [
+        "src/styles/*"
+      ],
+      "@utils/*": [
+        "src/utils/*"
+      ],
+      "@models/*": [
+        "src/models/*"
+      ],
+      "@store/*": [
+        "src/store/*"
+      ]
     },
     //Не создавать выходные файлы компилятора, например исходный код JavaScript. Для нас это делает Babel.
     "noEmit": true,
@@ -19,9 +36,14 @@
     "moduleResolution": "node",
     "jsx": "react",
     "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
+    "allowSyntheticDefaultImports": true
   },
-
-  "include": ["src/**/*"], // какие файлы включены в проверку
-  "exclude": ["node_modules"] // какие файлы исключены
+  "include": [
+    "src/**/*"
+  ],
+  // какие файлы включены в проверку
+  "exclude": [
+    "node_modules"
+  ]
+  // какие файлы исключены
 }

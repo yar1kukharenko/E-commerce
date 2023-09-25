@@ -1,0 +1,54 @@
+@import "styles/vars";
+
+body {
+  background-color: #FAFAFA;
+}
+
+.product_list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: $space-xs;
+  justify-items: center;
+  row-gap: 30px;
+}
+
+.wrapper {
+  padding: 100px 100px 54px;
+  display: flex;
+  flex-direction: column;
+  gap: $space-m;
+}
+
+.search {
+  display: flex;
+  justify-content: space-between;
+
+  .input {
+    width: 85%;
+  }
+
+}
+
+.dropdown {
+  max-width: 300px;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 48px;
+
+  &__button {
+    padding: 10px;
+    background: transparent;
+    color: $text-primary;
+
+  }
+}
+
+
+.active {
+  background-color: $button-primary-bg;
+  color: $button-primary-text;
+}
+

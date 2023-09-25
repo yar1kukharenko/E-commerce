@@ -1,0 +1,73 @@
+@import "src/styles/vars";
+
+.text {
+  font-family: 'Roboto', sans-serif;
+  font-weight: inherit;
+}
+
+.text_view-button {
+  font-size: 18px;
+  line-height: 18px;
+}
+
+.text_view-title {
+  font-size: 44px;
+  line-height: 48px;
+  font-weight: 700;
+}
+
+
+.text_view-p-20 {
+  font-size: 20px;
+  line-height: 24px;
+}
+
+.text_view-p-18 {
+  font-size: 18px;
+  line-height: 22px;
+}
+
+
+.text_view-p-16 {
+  font-size: 16px;
+  line-height: 20px;
+}
+
+.text_view-p-14 {
+  font-size: 14px;
+  line-height: 18px;
+}
+
+
+.text_weight-normal {
+  font-weight: 400;
+}
+
+
+.text_weight-medium {
+  font-weight: 500;
+}
+
+.text_weight-bold {
+  font-weight: 700;
+}
+
+.text_color-primary {
+  color: $text-primary;
+}
+
+.text_color-secondary {
+  color: $text-secondary;
+}
+
+.text_color-accent {
+  color: $text-accent;
+}
+
+
+//.text_multi-ellipsis {
+//  display: -webkit-box;
+//  overflow: hidden;
+//  text-overflow: ellipsis;
+//  -webkit-box-orient: vertical;
+//}

@@ -1,0 +1,46 @@
+@import "styles/vars";
+
+.button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  line-height: 22px;
+  min-height: 52px;
+  cursor: pointer;
+  padding: $space-s $space-l;
+  border: none;
+  gap: var(--space-xxs);
+  border-radius: $border-radius;
+  background-color: $button-primary-bg;
+  color: $button-primary-text;
+
+  &_disabled {
+    background-color: $button-primary-bg-disabled;
+    color: $button-primary-text-disabled;
+  }
+
+  &__loader {
+    color: $button-primary-text;
+    margin-right: 8px;
+    flex-shrink: 0;
+  }
+
+  &:hover {
+    background-color: $button-primary-bg-hover;
+    color: $button-primary-text-hover;
+  }
+
+  &:disabled {
+    pointer-events: none;
+  }
+
+  &:active {
+    background-color: $button-primary-bg-active;
+    color: $button-primary-text-active;
+  }
+
+  &__text, &__loader {
+    transition: color 0.3s ease;
+  }
+
+}
