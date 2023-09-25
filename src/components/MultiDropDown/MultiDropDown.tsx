@@ -1,9 +1,9 @@
 import classNames from 'classnames';
 import * as React from 'react';
 
-import ArrowDownIcon from 'components/icons/ArrowDownIcon';
-import Input from 'components/Input';
-import Text from 'components/Text';
+import ArrowDownIcon from '@components/icons/ArrowDownIcon';
+import Input from '@components/Input';
+import Text from '@components/Text';
 
 import styles from './MultiDropDown.module.scss';
 

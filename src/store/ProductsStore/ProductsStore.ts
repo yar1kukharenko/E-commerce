@@ -1,15 +1,15 @@
 import axios from 'axios';
 import { action, computed, IReactionDisposer, makeObservable, observable, reaction, runInAction } from 'mobx';
 
-import { Option } from 'components/MultiDropDown/MultiDropDown';
+import { Option } from '@components/MultiDropDown/MultiDropDown';
 import {
   CollectionModel,
   getInitialCollectionModel,
   linearizeCollection,
   normalizeCollection,
-} from 'store/models/shared/collectionModel';
-import rootStore from 'store/RootStore';
-import { Meta } from 'utils/meta';
+} from '@store/models/shared/collectionModel';
+import rootStore from '@store/RootStore';
+import { Meta } from '@utils/meta';
 
 import { normalizeRawProduct, RawProductModel } from '../models/Products';
 

@@ -78,14 +78,14 @@ module.exports = {
     ],
   },
   resolve: {
-    extensions: ['.ts', '.js', '.tsx', '.jsx'],
+    extensions: ['.tsx', '.jsx', '.js', '.ts'],
     alias: {
-      '@components': path.resolve(__dirname, 'src/components'),
-      '@config': path.resolve(__dirname, 'src/config'),
-      '@styles': path.join(__dirname, 'src/config'),
-      '@utils': path.join(__dirname, 'src/utils'),
-      '@models': path.join(__dirname, 'src/models'),
-      '@store': path.join(__dirname, 'src/store'),
+      '@components': path.join(srcPath, 'components'),
+      '@config': path.join(srcPath, 'config'),
+      '@styles': path.join(srcPath, 'styles'),
+      '@utils': path.join(srcPath, 'utils'),
+      '@models': path.join(srcPath, 'models'),
+      '@store': path.join(srcPath, 'store'),
     },
   },
   devServer: {

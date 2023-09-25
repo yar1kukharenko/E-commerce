@@ -1,4 +1,4 @@
-import RootStore from 'store/RootStore/RootStore';
+import RootStore from '@store/RootStore/RootStore';
 
 const rootStore = new RootStore();
 

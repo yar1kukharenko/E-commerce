@@ -1,8 +1,8 @@
 import classNames from 'classnames';
 import * as React from 'react';
 
-import Loader from 'components/Loader';
-import Text from 'components/Text';
+import Loader from '@components/Loader';
+import Text from '@components/Text';
 
 import styles from './Button.module.scss';
 

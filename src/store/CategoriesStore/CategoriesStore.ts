@@ -1,14 +1,14 @@
 import axios from 'axios';
 import { action, computed, makeObservable, observable, runInAction } from 'mobx';
 
-import { normalizeRawCategories, RawCategoriesModel } from 'store/models/Products';
+import { normalizeRawCategories, RawCategoriesModel } from '@store/models/Products';
 import {
   CollectionModel,
   getInitialCollectionModel,
   linearizeCollection,
   normalizeCollection,
-} from 'store/models/shared/collectionModel';
-import { Meta } from 'utils/meta';
+} from '@store/models/shared/collectionModel';
+import { Meta } from '@utils/meta';
 
 type PrivateFields = '_categories' | '_meta';
 

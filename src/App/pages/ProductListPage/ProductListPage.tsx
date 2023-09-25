@@ -4,13 +4,13 @@ import classNames from 'classnames';
 import * as React from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 
-import Button from 'components/Button';
-import Card from 'components/Card';
-import Input from 'components/Input';
-import MultiDropDown from 'components/MultiDropDown';
-import { Option } from 'components/MultiDropDown/MultiDropDown';
-import { CategoriesStore } from 'store/CategoriesStore/CategoriesStore';
-import { ProductsStore } from 'store/ProductsStore/ProductsStore';
+import Button from '@components/Button';
+import Card from '@components/Card';
+import Input from '@components/Input';
+import MultiDropDown from '@components/MultiDropDown';
+import { Option } from '@components/MultiDropDown/MultiDropDown';
+import { CategoriesStore } from '@store/CategoriesStore/CategoriesStore';
+import { ProductsStore } from '@store/ProductsStore/ProductsStore';
 
 import { usePaginationLogic, useSearchLogic } from './hooks';
 import styles from './ProductListPage.module.scss';
@@ -150,6 +150,6 @@ const ProductListPage = () => {
       </div>
     </>
   );
-}
+};
 
 export default observer(ProductListPage);

@@ -3,9 +3,8 @@ import { observer, useLocalObservable } from 'mobx-react-lite';
 import * as React from 'react';
 import { useParams } from 'react-router-dom';
 
-import Button from 'components/Button';
-
-import { ProductsStore } from '../../../store/ProductsStore/ProductsStore';
+import Button from '@components/Button';
+import { ProductsStore } from '@store/ProductsStore/ProductsStore';
 
 import Product from './components';
 
@@ -32,6 +31,6 @@ const ProductPage = () => {
       actionSlotRight={<Button>Add to Cart</Button>}
     />
   );
-}
+};
 
 export default observer(ProductPage);

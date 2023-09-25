@@ -1,4 +1,4 @@
-@import "styles/vars";
+@import "@styles/vars";
 
 body {
   background-color: #FAFAFA;
@@ -8,7 +8,7 @@ body {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
   gap: $space-xs;
-  justify-items: center;
+  justify-items: stretch;
   row-gap: 30px;
 }
 
