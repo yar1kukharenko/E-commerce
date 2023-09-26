@@ -2,6 +2,7 @@ import axios from 'axios';
 import { action, computed, IReactionDisposer, makeObservable, observable, reaction, runInAction } from 'mobx';
 
 import { Option } from '@components/MultiDropDown/MultiDropDown';
+import { getApiUrl } from '@config/api';
 import { Meta } from '@config/meta';
 import { ProductModel } from '@store/models/Products/ProductModel';
 import {
@@ -68,7 +69,7 @@ export class ProductsStore {
     console.log(categoriesUrl);
     const result = await axios({
       method: 'GET',
-      url: `https://api.escuelajs.co/api/v1/products?${titleUrl}&${categoriesUrl}&offset=${(page - 1) * 9}&limit=9`,
+      url: getApiUrl(`products?${titleUrl}&${categoriesUrl}&offset=${(page - 1) * 9}&limit=9`),
     });
     runInAction(() => {
       if (result.status === 200) {
@@ -95,7 +96,7 @@ export class ProductsStore {
 
     const result = await axios({
       method: 'get',
-      url: `https://api.escuelajs.co/api/v1/products/${id}`,
+      url: getApiUrl(`products/${id}`),
     });
     runInAction(() => {
       if (result.status === 200) {
