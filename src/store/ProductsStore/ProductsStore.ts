@@ -56,14 +56,21 @@ export class ProductsStore {
 
       fetchProducts: action,
       fetchProduct: action,
+
+      setMeta: action.bound,
+      setProducts: action.bound,
     });
   }
 
+  setMeta(meta: Meta) {
+    this._meta = meta;
+  }
+
+  setProducts(products: CollectionModel<number, ProductModel>) {
+    this._products = products;
+  }
+
   fetchProducts = async (title?: string, categories: Option[] = [], page: number = 1) => {
-    runInAction(() => {
-      this._meta = Meta.loading;
-      this._products = getInitialCollectionModel();
-    });
     const titleUrl = title ? `title=${title}` : '';
     const categoriesUrl = categories?.length ? `&categoryId=${categories.map((c) => c.key).join(',')}` : '';
     console.log(categoriesUrl);
