@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { HttpStatusCode } from 'axios';
 import { action, computed, makeObservable, observable, runInAction } from 'mobx';
 
 import { Meta } from '@config/meta';
@@ -42,7 +42,7 @@ export class CategoriesStore {
     try {
       const result = await axios.get('https://api.escuelajs.co/api/v1/categories');
       runInAction(() => {
-        if (result.status === 200) {
+        if (result.status === HttpStatusCode.Ok) {
           const categories: RawCategoriesModel[] = result.data.map(normalizeRawCategories);
           this._categories = normalizeCollection(categories, (categoryItem) => categoryItem.id);
           this._meta = Meta.success;

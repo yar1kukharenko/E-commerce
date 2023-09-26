@@ -1,9 +1,9 @@
-import axios from 'axios';
+import axios, { AxiosResponse, HttpStatusCode } from 'axios';
 import { action, computed, IReactionDisposer, makeObservable, observable, reaction, runInAction } from 'mobx';
 
 import { Option } from '@components/MultiDropDown/MultiDropDown';
 import { getApiUrl } from '@config/api';
-import { Meta } from '@config/meta';
+import { CONFIG } from '@config/config';
 import { ProductModel } from '@store/models/Products/ProductModel';
 import {
   CollectionModel,
@@ -12,17 +12,20 @@ import {
   normalizeCollection,
 } from '@store/models/shared/collectionModel';
 import rootStore from '@store/RootStore';
+import { RequestState } from '@store/RootStore/RequestState';
+import { Meta } from '@store/RootStore/RequestState/RequestState';
+import { devLog } from '@utils/devLog';
 
-import { normalizeRawProduct } from '../models/Products';
+import { normalizeRawProduct, RawProductAPI } from '../models/Products';
 
-type PrivateFields = '_products' | '_currentProduct' | '_meta' | '_hasNextPage';
+type PrivateFields = '_products' | '_currentProduct' | '_hasNextPage';
 
 export class ProductsStore {
   private _products: CollectionModel<number, ProductModel> = getInitialCollectionModel();
 
   private _currentProduct: ProductModel | null = null;
 
-  private _meta: Meta = Meta.initial;
+  private requestState = new RequestState();
 
   private _hasNextPage: boolean = true;
 
@@ -34,10 +37,6 @@ export class ProductsStore {
     return this._currentProduct;
   }
 
-  get meta(): Meta {
-    return this._meta;
-  }
-
   get hasNextPage(): boolean {
     return this._hasNextPage;
   }
@@ -46,85 +45,108 @@ export class ProductsStore {
     makeObservable<this, PrivateFields>(this, {
       _products: observable.ref,
       _currentProduct: observable.ref,
-      _meta: observable,
       _hasNextPage: observable,
 
       products: computed,
       currentProduct: computed,
-      meta: computed,
       hasNextPage: computed,
 
       fetchProducts: action,
       fetchProduct: action,
 
-      setMeta: action.bound,
       setProducts: action.bound,
     });
-  }
-
-  setMeta(meta: Meta) {
-    this._meta = meta;
   }
 
   setProducts(products: CollectionModel<number, ProductModel>) {
     this._products = products;
   }
 
+  static buildProductsURL(title?: string, categories: Option[] = [], page: number = 1, id?: number): string {
+    const params = new URLSearchParams();
+
+    if (title) params.append('title', title);
+    if (categories.length) params.append('categoryId', categories.map((c) => c.key).join(','));
+    if (page) {
+      params.append('offset', `${(page - 1) * CONFIG.PRODUCTS_PER_PAGE}`);
+      params.append('limit', `${CONFIG.PRODUCTS_PER_PAGE}`);
+    }
+
+    return id ? `products/${id}` : `products?${params.toString()}`;
+  }
+
   fetchProducts = async (title?: string, categories: Option[] = [], page: number = 1) => {
-    const titleUrl = title ? `title=${title}` : '';
-    const categoriesUrl = categories?.length ? `&categoryId=${categories.map((c) => c.key).join(',')}` : '';
-    console.log(categoriesUrl);
-    const result = await axios({
+    if (this.requestState.isLoading) {
+      return;
+    }
+    this.requestState.set(Meta.loading);
+    const url = getApiUrl(ProductsStore.buildProductsURL(title, categories, page));
+    const result = await axios<RawProductAPI[]>({
       method: 'GET',
-      url: getApiUrl(`products?${titleUrl}&${categoriesUrl}&offset=${(page - 1) * 9}&limit=9`),
+      url,
     });
     runInAction(() => {
-      if (result.status === 200) {
-        try {
-          const products: ProductModel[] = result.data.map(normalizeRawProduct);
-
-          this._meta = Meta.success;
-          this._products = normalizeCollection(products, (productItem) => productItem.id);
-          this._hasNextPage = result.data.length === 9;
-        } catch (e) {
-          console.log(e);
-          this._meta = Meta.error;
-          this._products = getInitialCollectionModel();
-        }
-      } else {
-        this._meta = Meta.error;
-      }
+      this.processFetchProductsResult(result);
     });
   };
+
+  processFetchProductsResult(result: AxiosResponse<RawProductAPI[]>) {
+    if (result.status === HttpStatusCode.Ok) {
+      try {
+        const products: ProductModel[] = result.data.map(normalizeRawProduct);
+        this.requestState.set(Meta.success);
+        this.setProducts(normalizeCollection(products, (productItem) => productItem.id));
+        this.setHasNextPage(result.data.length === CONFIG.PRODUCTS_PER_PAGE);
+      } catch (e) {
+        devLog(e);
+        this.requestState.set(Meta.error);
+        this.setProducts(getInitialCollectionModel());
+      }
+    } else {
+      this.requestState.set(Meta.error);
+    }
+  }
+
+  setHasNextPage(hasNextPage: boolean) {
+    this._hasNextPage = hasNextPage;
+  }
 
   fetchProduct = async (id: number) => {
-    this._meta = Meta.loading;
+    if (this.requestState.isLoading) {
+      return;
+    }
+    this.requestState.set(Meta.loading);
     this._currentProduct = null;
-
-    const result = await axios({
+    const url = getApiUrl(ProductsStore.buildProductsURL(undefined, [], undefined, id));
+    const result = await axios<RawProductAPI>({
       method: 'get',
-      url: getApiUrl(`products/${id}`),
+      url,
     });
     runInAction(() => {
-      if (result.status === 200) {
-        try {
-          this._meta = Meta.success;
-          const normalizedProduct = normalizeRawProduct(result.data);
-          this._currentProduct = normalizedProduct;
-          if (!this._products.order.includes(normalizedProduct.id)) {
-            this._products.order.push(normalizedProduct.id);
-          }
-          this._products.entities[normalizedProduct.id] = normalizedProduct;
-        } catch (e) {
-          console.log(e);
-          this._currentProduct = null;
-          this._meta = Meta.error;
-        }
-      } else {
-        this._meta = Meta.error;
-      }
+      this.processFetchProductResult(result);
     });
   };
+
+  processFetchProductResult(result: AxiosResponse<RawProductAPI>) {
+    if (result.status === HttpStatusCode.Ok) {
+      try {
+        this.requestState.set(Meta.success);
+        const normalizedProduct = normalizeRawProduct(result.data);
+        this._currentProduct = normalizedProduct;
+
+        if (!this._products.order.includes(normalizedProduct.id)) {
+          this._products.order.push(normalizedProduct.id);
+        }
+        this._products.entities[normalizedProduct.id] = normalizedProduct;
+      } catch (e) {
+        devLog(e);
+        this.requestState.set(Meta.error);
+        this._currentProduct = null;
+      }
+    } else {
+      this.requestState.set(Meta.error);
+    }
+  }
 
   destroy(): void {
     this._qpReaction();
@@ -133,7 +155,7 @@ export class ProductsStore {
   private readonly _qpReaction: IReactionDisposer = reaction(
     () => rootStore.query.getParam('search'),
     (search) => {
-      console.log('search', search);
+      devLog('search', search);
     },
   );
 }
