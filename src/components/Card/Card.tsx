@@ -7,7 +7,7 @@ import styles from './Card.module.scss';
 
 export type CardProps = {
   className?: string;
-  image: string;
+  images: string[] | null;
   captionSlot?: React.ReactNode;
   title: React.ReactNode;
   subtitle: React.ReactNode;
@@ -24,13 +24,15 @@ const Card: React.FC<CardProps> = ({
   captionSlot,
   subtitle,
   title,
-  image,
+  images,
 }) => {
   const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
     if (event.key === 'Enter' && onClick) {
       onClick(event as unknown as React.MouseEvent<HTMLDivElement>); // Приводим к MouseEvent, так как onClick ожидает MouseEvent
     }
   };
+  const placeholderImage = 'src/img/image_not_found.png';
+  const displayedImage = images && images[0] ? images[0] : placeholderImage;
   return (
     <div
       role="button"
@@ -40,7 +42,7 @@ const Card: React.FC<CardProps> = ({
       onClick={onClick}
     >
       <div className={styles.card__header}>
-        <img className={styles.img} src={image} alt="card" />
+        <img className={styles.img} src={displayedImage} alt="card" />
       </div>
       <div className={styles.card__body}>
         {captionSlot && (

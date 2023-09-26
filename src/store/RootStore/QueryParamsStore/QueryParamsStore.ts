@@ -9,13 +9,13 @@ export default class QueryParamsStore {
   private _search: string = '';
 
   constructor() {
-    makeObservable<QueryParamsStore, PrivateFields>(this, {
+    makeObservable<this, PrivateFields>(this, {
       _params: observable.ref,
       setSearch: action,
     });
   }
 
-  getParam(key: string): undefined | string | string[] | qs.ParsedQs | qs.ParsedQs[] {
+  getParam(key: string): qs.ParsedQs[string] {
     return this._params[key];
   }
 

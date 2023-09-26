@@ -122,7 +122,7 @@ const ProductListPage = () => {
             <Link to={`/product/${product.id}`} key={product.id}>
               <Card
                 title={product.title}
-                image={product.images[0]}
+                images={product.image}
                 captionSlot={product.category.name}
                 subtitle={product.description}
                 contentSlot={`${product.price}$`}

@@ -2,6 +2,8 @@ import axios from 'axios';
 import { action, computed, IReactionDisposer, makeObservable, observable, reaction, runInAction } from 'mobx';
 
 import { Option } from '@components/MultiDropDown/MultiDropDown';
+import { Meta } from '@config/meta';
+import { ProductModel } from '@store/models/Products/ProductModel';
 import {
   CollectionModel,
   getInitialCollectionModel,
@@ -9,26 +11,25 @@ import {
   normalizeCollection,
 } from '@store/models/shared/collectionModel';
 import rootStore from '@store/RootStore';
-import { Meta } from '@utils/meta';
 
-import { normalizeRawProduct, RawProductModel } from '../models/Products';
+import { normalizeRawProduct } from '../models/Products';
 
 type PrivateFields = '_products' | '_currentProduct' | '_meta' | '_hasNextPage';
 
 export class ProductsStore {
-  private _products: CollectionModel<number, RawProductModel> = getInitialCollectionModel();
+  private _products: CollectionModel<number, ProductModel> = getInitialCollectionModel();
 
-  private _currentProduct: RawProductModel | null = null;
+  private _currentProduct: ProductModel | null = null;
 
   private _meta: Meta = Meta.initial;
 
   private _hasNextPage: boolean = true;
 
-  get products(): RawProductModel[] {
+  get products(): ProductModel[] {
     return linearizeCollection(this._products);
   }
 
-  get currentProduct(): RawProductModel | null {
+  get currentProduct(): ProductModel | null {
     return this._currentProduct;
   }
 
@@ -41,7 +42,7 @@ export class ProductsStore {
   }
 
   constructor() {
-    makeObservable<ProductsStore, PrivateFields>(this, {
+    makeObservable<this, PrivateFields>(this, {
       _products: observable.ref,
       _currentProduct: observable.ref,
       _meta: observable,
@@ -72,7 +73,7 @@ export class ProductsStore {
     runInAction(() => {
       if (result.status === 200) {
         try {
-          const products: RawProductModel[] = result.data.map(normalizeRawProduct);
+          const products: ProductModel[] = result.data.map(normalizeRawProduct);
 
           this._meta = Meta.success;
           this._products = normalizeCollection(products, (productItem) => productItem.id);

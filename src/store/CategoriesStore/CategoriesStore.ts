@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { action, computed, makeObservable, observable, runInAction } from 'mobx';
 
+import { Meta } from '@config/meta';
 import { normalizeRawCategories, RawCategoriesModel } from '@store/models/Products';
 import {
   CollectionModel,
@@ -8,7 +9,6 @@ import {
   linearizeCollection,
   normalizeCollection,
 } from '@store/models/shared/collectionModel';
-import { Meta } from '@utils/meta';
 
 type PrivateFields = '_categories' | '_meta';
 
@@ -18,7 +18,7 @@ export class CategoriesStore {
   private _meta = Meta.initial;
 
   constructor() {
-    makeObservable<CategoriesStore, PrivateFields>(this, {
+    makeObservable<this, PrivateFields>(this, {
       _categories: observable.ref,
       _meta: observable,
       fetchCategories: action,

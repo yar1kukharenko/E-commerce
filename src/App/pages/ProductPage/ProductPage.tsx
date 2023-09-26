@@ -20,10 +20,11 @@ const ProductPage = () => {
     return <p>Loading...</p>;
   }
 
-  const { images, title, description, price } = productsStore.currentProduct;
+  const { image, title, description, price } = productsStore.currentProduct;
+
   return (
     <Product
-      image={images[0]}
+      image={image}
       title={title}
       description={description}
       price={`${price}$`}
