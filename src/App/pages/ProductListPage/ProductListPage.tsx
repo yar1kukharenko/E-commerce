@@ -7,12 +7,12 @@ import { Link, useSearchParams } from 'react-router-dom';
 import Button from '@components/Button';
 import Card from '@components/Card';
 import Input from '@components/Input';
-import MultiDropDown from '@components/MultiDropDown';
-import { Option } from '@components/MultiDropDown/MultiDropDown';
+import MultiDropdown from '@components/MultiDropdown';
 import { CategoriesStore } from '@store/CategoriesStore/CategoriesStore';
+import { Option } from '@store/MultiDropdownStore/MultiDropdownStore';
+import { ProductListStore } from '@store/ProductListStore/ProductListStore';
 import { ProductsStore } from '@store/ProductsStore/ProductsStore';
 
-import { usePaginationLogic, useSearchLogic } from './hooks';
 import styles from './ProductListPage.module.scss';
 
 const ProductListPage = () => {
@@ -20,7 +20,6 @@ const ProductListPage = () => {
   const categoriesStore = useLocalObservable(() => new CategoriesStore());
   const [searchParams, setSearchParams] = useSearchParams();
   const [selectedCategories, setSelectedCategories] = React.useState<Option[]>([]);
-
   const updateSearchParams = React.useCallback(
     (updatedParams: Record<string, string>) => {
       const currentParams = Array.from(searchParams.entries()).reduce(
@@ -49,47 +48,38 @@ const ProductListPage = () => {
 
     loadCategories();
   }, [categoriesStore, searchParams]);
-  const {
-    searchValue,
-    handleInputChange,
-    handleSearch: applySearch,
-  } = useSearchLogic(searchParams.get('search') || '');
-  const { currentPage, handlePageChange: navigateToPage } = usePaginationLogic(
-    parseInt((searchParams.get('page') as string) || '1', 10),
-  );
-  React.useEffect(() => {
-    const currentSearchValue = (searchParams.get('search') as string) || '';
 
-    if (currentSearchValue) {
-      handleInputChange(currentSearchValue);
-      productsStore.fetchProducts(currentSearchValue, selectedCategories, currentPage);
-    } else {
-      productsStore.fetchProducts(undefined, selectedCategories, currentPage);
-    }
-  }, [productsStore, searchParams, selectedCategories]);
+  // const [searchValue, setSearchValue] = React.useState(searchParams.get('search') || '');
+  // const [currentPage, setCurrentPage] = React.useState(parseInt((searchParams.get('page') as string) || '1', 10));
+  //
+  // React.useEffect(() => {
+  //   const currentSearchValue = (searchParams.get('search') as string) || '';
+  //
+  //   if (currentSearchValue) {
+  //     setSearchValue(currentSearchValue);
+  //     productsStore.fetchProducts(currentSearchValue, selectedCategories, currentPage);
+  //   } else {
+  //     productsStore.fetchProducts(undefined, selectedCategories, currentPage);
+  //   }
+  // }, [productsStore, searchParams, selectedCategories]);
+  //
+  // const handleSearch = () => {
+  //   setSearchParams({ search: searchValue });
+  //   productsStore.fetchProducts(searchValue, selectedCategories, 1);
+  //   setCurrentPage(1);
+  // };
+  //
+  // const handlePageChange = (newPage: number) => {
+  //   updateSearchParams({ page: String(newPage) });
+  //   productsStore.fetchProducts(searchValue, selectedCategories, newPage);
+  //   setCurrentPage(newPage);
+  // };
+  // const handleOnChange = (options: Option[]) => {
+  //   setSelectedCategories(options);
+  //   updateSearchParams({ categories: options.map((o) => o.key).join(',') });
+  // };
 
-  const handleSearch = () => {
-    applySearch((value: string) => {
-      setSearchParams({ search: value });
-      navigateToPage(1, (page) => {
-        productsStore.fetchProducts(searchValue, selectedCategories, page);
-      });
-
-      productsStore.fetchProducts(value, selectedCategories, 1);
-    });
-  };
-
-  const handlePageChange = (newPage: number) => {
-    navigateToPage(newPage, (page) => {
-      updateSearchParams({ page: String(page) });
-      productsStore.fetchProducts(searchValue, selectedCategories, page);
-    });
-  };
-
-  const handleOnChange = (options: Option[]) => {
-    setSelectedCategories(options);
-    updateSearchParams({ categories: options.map((o) => o.key).join(',') });
-  };
+  const productListStore = useLocalObservable(() => new ProductListStore(productsStore, categoriesStore));
 
   return (
     <>
@@ -98,18 +88,18 @@ const ProductListPage = () => {
           <Input
             className={styles.input}
             placeholder="Search product"
-            value={searchValue}
-            onChange={handleInputChange}
+            value={productListStore.searchValue}
+            onChange={productListStore.s}
           />
-          <Button onClick={handleSearch} className={styles.search__button}>
+          <Button onClick={productListStore.handleSearch} className={styles.search__button}>
             Find Now
           </Button>
         </div>
-        <MultiDropDown
+        <MultiDropdown
           className={styles.dropdown}
           options={categoriesStore.categories.map((cat) => ({ key: String(cat.id), value: cat.name }))}
           value={selectedCategories}
-          onChange={handleOnChange}
+          onChange={productListStore.handleOnChange}
           getTitle={(values) => {
             if (!Array.isArray(values) || values.length === 0) {
               return 'Filter';
@@ -133,18 +123,24 @@ const ProductListPage = () => {
         </div>
       </div>
       <div className={styles.pagination}>
-        {[...Array(currentPage).keys()].map((page) => (
+        {[...Array(productListStore.currentPage).keys()].map((page) => (
           <Button
             key={page}
-            onClick={() => handlePageChange(page + 1)}
-            className={classNames(page + 1 === currentPage ? styles.active : '', styles.pagination__button)}
+            onClick={() => productListStore.handlePageChange(page + 1)}
+            className={classNames(
+              page + 1 === productListStore.currentPage ? styles.active : '',
+              styles.pagination__button,
+            )}
           >
             {page + 1}
           </Button>
         ))}
         {productsStore.hasNextPage && (
-          <Button className={styles.pagination__button} onClick={() => handlePageChange(currentPage + 1)}>
-            {currentPage + 1}
+          <Button
+            className={styles.pagination__button}
+            onClick={() => productListStore.handlePageChange(productListStore.currentPage + 1)}
+          >
+            {productListStore.currentPage + 1}
           </Button>
         )}
       </div>

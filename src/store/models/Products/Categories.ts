@@ -11,7 +11,7 @@ export type RawCategoriesModel = {
 };
 
 export const normalizeRawCategories = (from: RawCategoriesAPI): RawCategoriesModel => ({
-    id: from.id,
-    name: from.name,
-    image: from.image,
-  });
+  id: from.id,
+  name: from.name,
+  image: from.image,
+});

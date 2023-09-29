@@ -15,17 +15,17 @@ const Icon: React.FC<React.PropsWithChildren<IconProps>> = ({
   height = 24,
   ...props
 }) => (
-    <svg
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      preserveAspectRatio="xMidYMid meet"
-      width={width}
-      height={height}
-      {...props}
-      className={classNames(styles.icon, color && `styles.icon_color_${color}`, className)}
-    >
-      {children}
-    </svg>
-  );
+  <svg
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    preserveAspectRatio="xMidYMid meet"
+    width={width}
+    height={height}
+    {...props}
+    className={classNames(styles.icon, color && `styles.icon_color_${color}`, className)}
+  >
+    {children}
+  </svg>
+);
 
 export default Icon;

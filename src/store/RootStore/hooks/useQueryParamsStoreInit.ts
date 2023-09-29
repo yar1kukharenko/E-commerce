@@ -7,4 +7,3 @@ export const useQueryParamsStoreInit = (): void => {
 
   rootStore.query.setSearch(search);
 };
-

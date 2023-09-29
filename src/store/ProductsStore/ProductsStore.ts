@@ -1,7 +1,6 @@
 import axios, { AxiosResponse, HttpStatusCode } from 'axios';
 import { action, computed, IReactionDisposer, makeObservable, observable, reaction, runInAction } from 'mobx';
 
-import { Option } from '@components/MultiDropDown/MultiDropDown';
 import { getApiUrl } from '@config/api';
 import { CONFIG } from '@config/config';
 import { ProductModel } from '@store/models/Products/ProductModel';
@@ -11,6 +10,7 @@ import {
   linearizeCollection,
   normalizeCollection,
 } from '@store/models/shared/collectionModel';
+import { Option } from '@store/MultiDropdownStore/MultiDropdownStore';
 import rootStore from '@store/RootStore';
 import { RequestState } from '@store/RootStore/RequestState';
 import { Meta } from '@store/RootStore/RequestState/RequestState';
@@ -25,7 +25,7 @@ export class ProductsStore {
 
   private _currentProduct: ProductModel | null = null;
 
-  private requestState = new RequestState();
+  private _requestState = new RequestState();
 
   private _hasNextPage: boolean = true;
 
@@ -41,6 +41,10 @@ export class ProductsStore {
     return this._hasNextPage;
   }
 
+  get getRequestState(): RequestState {
+    return this._requestState;
+  }
+
   constructor() {
     makeObservable<this, PrivateFields>(this, {
       _products: observable.ref,
@@ -50,9 +54,12 @@ export class ProductsStore {
       products: computed,
       currentProduct: computed,
       hasNextPage: computed,
+      getRequestState: computed,
 
       fetchProducts: action,
+      // processFetchProductsResult: action,
       fetchProduct: action,
+      processFetchProductResult: action,
 
       setProducts: action.bound,
     });
@@ -64,7 +71,6 @@ export class ProductsStore {
 
   static buildProductsURL(title?: string, categories: Option[] = [], page: number = 1, id?: number): string {
     const params = new URLSearchParams();
-
     if (title) params.append('title', title);
     if (categories.length) params.append('categoryId', categories.map((c) => c.key).join(','));
     if (page) {
@@ -75,47 +81,85 @@ export class ProductsStore {
     return id ? `products/${id}` : `products?${params.toString()}`;
   }
 
-  fetchProducts = async (title?: string, categories: Option[] = [], page: number = 1) => {
-    if (this.requestState.isLoading) {
-      return;
-    }
-    this.requestState.set(Meta.loading);
-    const url = getApiUrl(ProductsStore.buildProductsURL(title, categories, page));
-    const result = await axios<RawProductAPI[]>({
-      method: 'GET',
-      url,
-    });
-    runInAction(() => {
-      this.processFetchProductsResult(result);
-    });
-  };
-
-  processFetchProductsResult(result: AxiosResponse<RawProductAPI[]>) {
-    if (result.status === HttpStatusCode.Ok) {
-      try {
-        const products: ProductModel[] = result.data.map(normalizeRawProduct);
-        this.requestState.set(Meta.success);
-        this.setProducts(normalizeCollection(products, (productItem) => productItem.id));
-        this.setHasNextPage(result.data.length === CONFIG.PRODUCTS_PER_PAGE);
-      } catch (e) {
-        devLog(e);
-        this.requestState.set(Meta.error);
-        this.setProducts(getInitialCollectionModel());
-      }
-    } else {
-      this.requestState.set(Meta.error);
+  processMultipleCategoriesResult(rawProducts: RawProductAPI[]) {
+    try {
+      const products: ProductModel[] = rawProducts.map(normalizeRawProduct);
+      this.setProducts(normalizeCollection(products, (product) => product.id));
+      this.setHasNextPage(products.length === CONFIG.PRODUCTS_PER_PAGE);
+      this._requestState.set(Meta.success);
+    } catch (e) {
+      devLog(e);
+      this._requestState.set(Meta.error);
+      this.setProducts(getInitialCollectionModel());
     }
   }
+
+  processFetchProductsResult(result: AxiosResponse<RawProductAPI[]>) {
+    try {
+      const products: ProductModel[] = result.data.map(normalizeRawProduct);
+      this.setProducts(normalizeCollection(products, (product) => product.id));
+      this.setHasNextPage(products.length === CONFIG.PRODUCTS_PER_PAGE);
+      this._requestState.set(Meta.success);
+    } catch (e) {
+      devLog(e);
+      this._requestState.set(Meta.error);
+      this.setProducts(getInitialCollectionModel());
+    }
+  }
+
+  fetchProducts = async (title?: string, categories: Option[] = [], page: number = 1) => {
+    if (this._requestState.isLoading) {
+      return;
+    }
+
+    this._requestState.set(Meta.loading);
+
+    if (categories.length === 0) {
+      const url = getApiUrl(ProductsStore.buildProductsURL(title, [], page));
+      try {
+        const response = await axios.get<RawProductAPI[]>(url);
+        runInAction(() => {
+          this.processFetchProductsResult(response);
+        });
+      } catch (error) {
+        runInAction(() => {
+          devLog(error);
+          this._requestState.set(Meta.error);
+          this.setProducts(getInitialCollectionModel());
+        });
+      }
+      return;
+    }
+
+    const requests = categories.map((category) => {
+      const url = getApiUrl(ProductsStore.buildProductsURL(title, [category], page));
+      return axios.get<RawProductAPI[]>(url);
+    });
+
+    try {
+      const responses = await Promise.all(requests);
+      runInAction(() => {
+        const allProducts = responses.flatMap((response) => response.data);
+        this.processMultipleCategoriesResult(allProducts);
+      });
+    } catch (error) {
+      runInAction(() => {
+        devLog(error);
+        this._requestState.set(Meta.error);
+        this.setProducts(getInitialCollectionModel());
+      });
+    }
+  };
 
   setHasNextPage(hasNextPage: boolean) {
     this._hasNextPage = hasNextPage;
   }
 
   fetchProduct = async (id: number) => {
-    if (this.requestState.isLoading) {
+    if (this._requestState.isLoading) {
       return;
     }
-    this.requestState.set(Meta.loading);
+    this._requestState.set(Meta.loading);
     this._currentProduct = null;
     const url = getApiUrl(ProductsStore.buildProductsURL(undefined, [], undefined, id));
     const result = await axios<RawProductAPI>({
@@ -130,7 +174,7 @@ export class ProductsStore {
   processFetchProductResult(result: AxiosResponse<RawProductAPI>) {
     if (result.status === HttpStatusCode.Ok) {
       try {
-        this.requestState.set(Meta.success);
+        this._requestState.set(Meta.success);
         const normalizedProduct = normalizeRawProduct(result.data);
         this._currentProduct = normalizedProduct;
 
@@ -140,11 +184,11 @@ export class ProductsStore {
         this._products.entities[normalizedProduct.id] = normalizedProduct;
       } catch (e) {
         devLog(e);
-        this.requestState.set(Meta.error);
+        this._requestState.set(Meta.error);
         this._currentProduct = null;
       }
     } else {
-      this.requestState.set(Meta.error);
+      this._requestState.set(Meta.error);
     }
   }
 
