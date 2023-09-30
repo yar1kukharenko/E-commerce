@@ -9,7 +9,6 @@ import Card from '@components/Card';
 import Input from '@components/Input';
 import MultiDropdown from '@components/MultiDropdown';
 import { CategoriesStore } from '@store/CategoriesStore/CategoriesStore';
-import { Option } from '@store/MultiDropdownStore/MultiDropdownStore';
 import { ProductListStore } from '@store/ProductListStore/ProductListStore';
 import { ProductsStore } from '@store/ProductsStore/ProductsStore';
 
@@ -19,8 +18,8 @@ const ProductListPage = () => {
   const productsStore = useLocalObservable(() => new ProductsStore());
   const categoriesStore = useLocalObservable(() => new CategoriesStore());
   const [searchParams, setSearchParams] = useSearchParams();
-  const [selectedCategories, setSelectedCategories] = React.useState<Option[]>([]);
-  const updateSearchParams = React.useCallback(
+
+  const updateUrl = React.useCallback(
     (updatedParams: Record<string, string>) => {
       const currentParams = Array.from(searchParams.entries()).reduce(
         (acc, [key, value]) => ({ ...acc, [key]: value }),
@@ -31,56 +30,19 @@ const ProductListPage = () => {
     [searchParams, setSearchParams],
   );
 
+  const productListStore = useLocalObservable(() => new ProductListStore(productsStore, categoriesStore, updateUrl));
   React.useEffect(() => {
-    const loadCategories = async () => {
-      await categoriesStore.fetchCategories();
-      const categoriesString = searchParams.get('categories') || '';
-      const loadedCategories = categoriesString
-        .split(',')
-        .filter((cat) => cat)
-        .map((catId) => ({
-          key: catId,
-          value: categoriesStore.getCategoryNameById(parseInt(catId, 10)),
-        }));
-
-      setSelectedCategories(loadedCategories);
+    const fetchData = async () => {
+      await productListStore.fetchCategories();
+      await productListStore.fetchDataAndUpdateState();
     };
 
-    loadCategories();
-  }, [categoriesStore, searchParams]);
+    fetchData();
+  }, [productListStore]);
 
-  // const [searchValue, setSearchValue] = React.useState(searchParams.get('search') || '');
-  // const [currentPage, setCurrentPage] = React.useState(parseInt((searchParams.get('page') as string) || '1', 10));
-  //
-  // React.useEffect(() => {
-  //   const currentSearchValue = (searchParams.get('search') as string) || '';
-  //
-  //   if (currentSearchValue) {
-  //     setSearchValue(currentSearchValue);
-  //     productsStore.fetchProducts(currentSearchValue, selectedCategories, currentPage);
-  //   } else {
-  //     productsStore.fetchProducts(undefined, selectedCategories, currentPage);
-  //   }
-  // }, [productsStore, searchParams, selectedCategories]);
-  //
-  // const handleSearch = () => {
-  //   setSearchParams({ search: searchValue });
-  //   productsStore.fetchProducts(searchValue, selectedCategories, 1);
-  //   setCurrentPage(1);
-  // };
-  //
-  // const handlePageChange = (newPage: number) => {
-  //   updateSearchParams({ page: String(newPage) });
-  //   productsStore.fetchProducts(searchValue, selectedCategories, newPage);
-  //   setCurrentPage(newPage);
-  // };
-  // const handleOnChange = (options: Option[]) => {
-  //   setSelectedCategories(options);
-  //   updateSearchParams({ categories: options.map((o) => o.key).join(',') });
-  // };
-
-  const productListStore = useLocalObservable(() => new ProductListStore(productsStore, categoriesStore));
-
+  const handleSearchInputChange = (newValue: string) => {
+    productListStore.setSearchValue(newValue);
+  };
   return (
     <>
       <div className={styles.wrapper}>
@@ -89,7 +51,7 @@ const ProductListPage = () => {
             className={styles.input}
             placeholder="Search product"
             value={productListStore.searchValue}
-            onChange={productListStore.s}
+            onChange={handleSearchInputChange}
           />
           <Button onClick={productListStore.handleSearch} className={styles.search__button}>
             Find Now
@@ -97,9 +59,9 @@ const ProductListPage = () => {
         </div>
         <MultiDropdown
           className={styles.dropdown}
-          options={categoriesStore.categories.map((cat) => ({ key: String(cat.id), value: cat.name }))}
-          value={selectedCategories}
-          onChange={productListStore.handleOnChange}
+          options={productListStore.categories.map((cat) => ({ key: String(cat.id), value: cat.name }))}
+          value={productListStore.selectedCategories}
+          onChange={(options) => productListStore.handleOnChange(options)}
           getTitle={(values) => {
             if (!Array.isArray(values) || values.length === 0) {
               return 'Filter';
@@ -108,7 +70,7 @@ const ProductListPage = () => {
           }}
         />
         <div className={styles.product_list}>
-          {productsStore.products.map((product) => (
+          {productListStore.products.map((product) => (
             <Link to={`/product/${product.id}`} key={product.id}>
               <Card
                 title={product.title}

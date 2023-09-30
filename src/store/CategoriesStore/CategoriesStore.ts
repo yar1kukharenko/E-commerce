@@ -37,6 +37,7 @@ export class CategoriesStore {
     if (this._requestState.isLoading) {
       return;
     }
+    devLog('fetch cats');
     this._requestState.set(Meta.loading);
     const url = 'https://api.escuelajs.co/api/v1/categories';
     const result = await axios({
