@@ -31,6 +31,7 @@ const ProductListPage = () => {
   );
 
   const productListStore = useLocalObservable(() => new ProductListStore(productsStore, categoriesStore, updateUrl));
+
   React.useEffect(() => {
     const fetchData = async () => {
       await productListStore.fetchCategories();
@@ -43,6 +44,7 @@ const ProductListPage = () => {
   const handleSearchInputChange = (newValue: string) => {
     productListStore.setSearchValue(newValue);
   };
+
   return (
     <>
       <div className={styles.wrapper}>

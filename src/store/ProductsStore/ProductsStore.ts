@@ -1,5 +1,5 @@
 import axios, { AxiosResponse, HttpStatusCode } from 'axios';
-import { action, computed, IReactionDisposer, makeObservable, observable, reaction, runInAction } from 'mobx';
+import { action, computed, makeObservable, observable, runInAction } from 'mobx';
 
 import { getApiUrl } from '@config/api';
 import { CONFIG } from '@config/config';
@@ -11,7 +11,6 @@ import {
   normalizeCollection,
 } from '@store/models/shared/collectionModel';
 import { Option } from '@store/MultiDropdownStore/MultiDropdownStore';
-import rootStore from '@store/RootStore';
 import { RequestState } from '@store/RootStore/RequestState';
 import { Meta } from '@store/RootStore/RequestState/RequestState';
 import { devLog } from '@utils/devLog';
@@ -192,14 +191,14 @@ export class ProductsStore {
     }
   }
 
-  destroy(): void {
-    this._qpReaction();
-  }
+  // destroy(): void {
+  //   this._qpReaction();
+  // }
 
-  private readonly _qpReaction: IReactionDisposer = reaction(
-    () => rootStore.query.getParam('search'),
-    (search) => {
-      devLog('search', search);
-    },
-  );
+  // private readonly _qpReaction: IReactionDisposer = reaction(
+  //   () => rootStore.query.getParam('search'),
+  //   (search) => {
+  //     devLog('search', search);
+  //   },
+  // );
 }

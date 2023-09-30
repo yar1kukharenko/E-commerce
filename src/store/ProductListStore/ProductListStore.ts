@@ -56,12 +56,14 @@ export class ProductListStore {
       _currentPage: observable,
       _productsStore: observable,
 
-      handleSearch: action.bound,
+      handleSearch: action,
       handlePageChange: action,
       handleOnChange: action,
       dispose: action,
-      setSearchValue: action.bound,
       fetchDataAndUpdateState: action,
+      setSearchValue: action.bound,
+      setSelectedCategories: action.bound,
+      setCurrentPage: action.bound,
     });
   }
 
@@ -77,7 +79,7 @@ export class ProductListStore {
     return this._selectedCategories;
   }
 
-  set selectedCategories(categories: Option[]) {
+  setSelectedCategories(categories: Option[]) {
     this._selectedCategories = categories;
   }
 
@@ -89,7 +91,7 @@ export class ProductListStore {
     this._searchValue = value;
   }
 
-  set currentPage(page: number) {
+  setCurrentPage(page: number) {
     this._currentPage = page;
   }
 
@@ -142,7 +144,7 @@ export class ProductListStore {
       categories: this._selectedCategories.map((c) => c.key).join(','),
       page: String(this._currentPage),
     });
-    this.currentPage = 1;
+    this.setCurrentPage(1);
   }
 
   handlePageChange(newPage: number) {
@@ -152,11 +154,11 @@ export class ProductListStore {
       categories: this._selectedCategories.map((c) => c.key).join(','),
       page: String(newPage),
     });
-    this.currentPage = newPage;
+    this.setCurrentPage(newPage);
   }
 
   handleOnChange(options: Option[]) {
-    this.selectedCategories = options;
+    this.setSelectedCategories(options);
     this._updateUrl({
       search: this._searchValue,
       categories: this._selectedCategories.map((c) => c.key).join(','),
