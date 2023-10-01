@@ -1,0 +1,13 @@
+@import "@styles/vars";
+
+.nav {
+  display: flex;
+  gap: $space-xl;
+  align-items: center;
+  margin: 0 auto;
+}
+
+.link {
+  font-weight: 600;
+  line-height: 22px;
+}

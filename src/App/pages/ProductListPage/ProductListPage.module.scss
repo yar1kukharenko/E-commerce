@@ -9,11 +9,11 @@ body {
   grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
   gap: $space-xs;
   justify-items: stretch;
-  row-gap: 30px;
+  //row-gap: 30px;
 }
 
 .wrapper {
-  padding: 100px 100px 54px;
+  padding: 100px 0 54px;
   display: flex;
   flex-direction: column;
   gap: $space-m;
@@ -52,3 +52,27 @@ body {
   color: $button-primary-text;
 }
 
+
+.link {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+
+.textBlock {
+  display: flex;
+  flex-direction: column;
+  max-width: 653px;
+  margin: 100px auto 48px;
+  gap: $space-m;
+  
+}
+
+.title {
+  text-align: center;
+}
+
+.subtitle {
+  text-align: center;
+}

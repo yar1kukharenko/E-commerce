@@ -14,20 +14,20 @@ type ProductsListProps = {
 };
 
 const ProductsList: React.FC<ProductsListProps> = ({ productListStore }) => (
-    <div className={styles.product_list}>
-      {productListStore.products.map((product) => (
-        <Link to={`/product/${product.id}`} key={product.id}>
-          <Card
-            title={product.title}
-            images={product.image}
-            captionSlot={product.category.name}
-            subtitle={product.description}
-            contentSlot={`${product.price}$`}
-            actionSlot={<Button>Add to Cart</Button>}
-          />
-        </Link>
-      ))}
-    </div>
-  );
+  <div className={styles.product_list}>
+    {productListStore.products.map((product) => (
+      <Link className={styles.link} to={`/product/${product.id}`} key={product.id}>
+        <Card
+          title={product.title}
+          images={product.image}
+          captionSlot={product.category.name}
+          subtitle={product.description}
+          contentSlot={`${product.price}$`}
+          actionSlot={<Button>Add to Cart</Button>}
+        />
+      </Link>
+    ))}
+  </div>
+);
 
 export default observer(ProductsList);

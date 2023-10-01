@@ -8,6 +8,8 @@ import { DropdownStoreProvider } from '../context/DropdownStoreContext';
 import ProductListPage from './pages/ProductListPage';
 import ProductPage from './pages/ProductPage/ProductPage';
 
+import '@styles/globalStyles.module.scss';
+
 const App = () => {
   useQueryParamsStoreInit();
   return (
