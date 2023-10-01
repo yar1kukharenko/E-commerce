@@ -64,6 +64,7 @@ const MultiDropDown: React.FC<MultiDropDownProps> = ({ className, getTitle, opti
       ref={rootRef}
     >
       <Input
+        id="multiDropdown"
         className={styles.dropdown__input}
         value={inputValue}
         onClick={onClickDropdown}

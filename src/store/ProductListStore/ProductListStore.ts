@@ -5,7 +5,7 @@ import { Option } from '@store/MultiDropdownStore/MultiDropdownStore';
 import { ProductsStore } from '@store/ProductsStore/ProductsStore';
 import rootStore from '@store/RootStore';
 
-type PrivateFields = '_searchValue' | '_selectedCategories' | '_currentPage' | '_productsStore';
+type PrivateFields = '_searchValue' | '_selectedCategories' | '_currentPage' | '_productsStore' | '_categoriesStore';
 
 export class ProductListStore {
   private _searchValue: string = '';
@@ -49,22 +49,30 @@ export class ProductListStore {
       },
     );
 
-    this.handleSearch = this.handleSearch.bind(this);
     makeObservable<this, PrivateFields>(this, {
       _searchValue: observable,
       _selectedCategories: observable,
       _currentPage: observable,
       _productsStore: observable,
+      _categoriesStore: observable,
 
       handleSearch: action,
       handlePageChange: action,
       handleOnChange: action,
       dispose: action,
       fetchDataAndUpdateState: action,
+      parseAndSetCategoriesFromUrl: action,
+      parseAndSetSearchValueFromUrl: action,
       setSearchValue: action.bound,
+      fetchProducts: action,
+      fetchCategories: action,
       setSelectedCategories: action.bound,
       setCurrentPage: action.bound,
     });
+  }
+
+  get hasNextPage() {
+    return this._productsStore.hasNextPage;
   }
 
   get categories() {
@@ -137,7 +145,7 @@ export class ProductListStore {
     await this.fetchProducts();
   }
 
-  handleSearch() {
+  handleSearch = () => {
     this._productsStore.fetchProducts(this.searchValue, this.selectedCategories, 1);
     this._updateUrl({
       search: this._searchValue,
@@ -145,7 +153,7 @@ export class ProductListStore {
       page: String(this._currentPage),
     });
     this.setCurrentPage(1);
-  }
+  };
 
   handlePageChange(newPage: number) {
     this._productsStore.fetchProducts(this.searchValue, this.selectedCategories, newPage);

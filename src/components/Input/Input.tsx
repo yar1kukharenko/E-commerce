@@ -7,9 +7,10 @@ export type InputProps = Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onCh
   value: string;
   onChange: (value: string) => void;
   afterSlot?: React.ReactNode;
+  id: string;
 };
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ value, className, onChange, afterSlot, disabled, ...props }, ref) => {
+  ({ value, className, onChange, afterSlot, disabled, id, ...props }, ref) => {
     const changeHandler = React.useCallback(
       (e: React.ChangeEvent<HTMLInputElement>) => {
         onChange(e.target.value);
@@ -18,11 +19,11 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     );
     return (
       <label
-        htmlFor="input"
+        htmlFor={id}
         className={classNames(styles.input_wrapper, disabled && styles.input_wrapper_disabled, className)}
       >
         <input
-          id="input"
+          id="id"
           value={value}
           onChange={changeHandler}
           className={styles.input}
