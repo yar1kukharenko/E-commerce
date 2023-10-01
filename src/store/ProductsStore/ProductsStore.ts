@@ -3,7 +3,7 @@ import { action, computed, makeObservable, observable, runInAction } from 'mobx'
 
 import { getApiUrl } from '@config/api';
 import { CONFIG } from '@config/config';
-import { ProductModel } from '@store/models/Products/ProductModel';
+import { normalizeRawProduct, ProductModel, RawProductAPI } from '@store/models/Products';
 import {
   CollectionModel,
   getInitialCollectionModel,
@@ -14,8 +14,6 @@ import { Option } from '@store/MultiDropdownStore/MultiDropdownStore';
 import { RequestState } from '@store/RootStore/RequestState';
 import { Meta } from '@store/RootStore/RequestState/RequestState';
 import { devLog } from '@utils/devLog';
-
-import { normalizeRawProduct, RawProductAPI } from '../models/Products';
 
 type PrivateFields = '_products' | '_currentProduct' | '_hasNextPage';
 
@@ -190,15 +188,4 @@ export class ProductsStore {
       this._requestState.set(Meta.error);
     }
   }
-
-  // destroy(): void {
-  //   this._qpReaction();
-  // }
-
-  // private readonly _qpReaction: IReactionDisposer = reaction(
-  //   () => rootStore.query.getParam('search'),
-  //   (search) => {
-  //     devLog('search', search);
-  //   },
-  // );
 }

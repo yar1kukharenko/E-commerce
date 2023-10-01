@@ -1,14 +1,14 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
-const buildPath = path.resolve(__dirname, 'dist');
-const srcPath = path.resolve(__dirname, 'src');
-const isProd = process.env.NODE_ENV === 'production';
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const TsCheckerPlugin = require('fork-ts-checker-webpack-plugin');
 
+const buildPath = path.resolve(__dirname, 'dist');
+const srcPath = path.resolve(__dirname, 'src');
+const isProd = process.env.NODE_ENV === 'production';
+
 const getSettingsForStyles = (withModules = false) => {
-  //Заменяем в нашей функции style-loader на mini-css-extract-plugin
   return [
     MiniCssExtractPlugin.loader,
     !withModules
@@ -46,7 +46,6 @@ module.exports = {
     }),
     !isProd && new ReactRefreshWebpackPlugin(),
     new MiniCssExtractPlugin({
-      // Для того чтобы файл со стилями не кэшировался в браузере добавим filename
       filename: '[name]-[hash].css',
     }),
     new TsCheckerPlugin(),

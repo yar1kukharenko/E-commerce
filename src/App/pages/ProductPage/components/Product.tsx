@@ -23,7 +23,7 @@ const Product: React.FC<ProductProps> = ({
   image,
   title,
 }: ProductProps) => {
-  const placeholderImage = 'src/img/image_not_found.png';
+  const placeholderImage = 'src/assets/images/image_not_found.png';
   const displayedImage = image && image[0] ? image[0] : placeholderImage;
   return (
     <div className={classNames(styles.product_page, className)}>

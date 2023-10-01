@@ -1,8 +1,9 @@
 import * as React from 'react';
-import { Route, Routes } from 'react-router-dom'; // import ProductListPage from './pages/ProductListPage';
+import { Route, Routes } from 'react-router-dom';
+
+import { useQueryParamsStoreInit } from '@store/RootStore/hooks/useQueryParamsStoreInit';
 
 import { DropdownStoreProvider } from '../context/DropdownStoreContext';
-import { useQueryParamsStoreInit } from '../store/RootStore/hooks/useQueryParamsStoreInit';
 
 import ProductListPage from './pages/ProductListPage';
 import ProductPage from './pages/ProductPage/ProductPage';
