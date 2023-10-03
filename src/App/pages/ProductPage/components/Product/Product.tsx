@@ -8,7 +8,7 @@ import styles from './Product.module.scss';
 
 export type ProductProps = {
   className?: string;
-  image: string[] | null;
+  image: string[] | string | null;
   title: React.ReactNode;
   description?: React.ReactNode;
   price: React.ReactNode;

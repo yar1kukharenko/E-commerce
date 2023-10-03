@@ -46,7 +46,7 @@ export class RelatedProductsStore {
     const params = new URLSearchParams();
     if (category) params.append('categoryId', `${category}`);
 
-    params.append('offset', `0`);
+    params.append('offset', `1`);
     params.append('limit', `${limit}`);
 
     return `products?${params.toString()}`;

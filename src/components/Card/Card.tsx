@@ -37,7 +37,7 @@ const Card: React.FC<CardProps> = ({
   const handleImageError = () => {
     setCurrentImage(CONFIG.PLACEHOLDERIMAGE);
   };
-  // const displayedImage = images && images[0] ? images[0] : CONFIG.PLACEHOLDERIMAGE;
+
   return (
     <div
       role="button"

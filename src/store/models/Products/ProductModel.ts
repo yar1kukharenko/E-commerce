@@ -27,24 +27,31 @@ export class ProductModel {
       image: string;
     };
     description: string;
-    images: string[];
+    images?: string[];
   }) {
     this.id = data.id;
     this.title = data.title;
     this._price = data.price;
     this.category = data.category;
     this.description = data.description;
-    this._images = data.images;
+    this._images = data.images || [];
   }
 
-  @computed get price(): string {
-    // Тут можно добавить логику по форматированию цены, сейчас просто добавим знак доллара
+  @computed get price(): number {
+    return this._price;
+  }
+
+  @computed get formattedPrice(): string {
     return `$${this._price.toFixed(2)}`;
   }
 
   @computed get image(): string[] | null {
     return this._images.length > 0 ? this._images : null;
   }
+
+  // @computed get image(): string | null {
+  //   return this._images && this._images.length > 0 ? this._images[0] : null;
+  // }
 
   @action setPrice(price: number): void {
     this._price = price;

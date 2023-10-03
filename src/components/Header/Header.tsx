@@ -13,7 +13,7 @@ const Header = () => (
       <Logo />
     </Link>
     <Navigation />
-    <Link to="/">
+    <Link to="/basket">
       <BagIcon width={30} height={30} />
     </Link>
   </div>
