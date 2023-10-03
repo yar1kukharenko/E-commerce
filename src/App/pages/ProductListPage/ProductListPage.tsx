@@ -5,12 +5,12 @@ import * as React from 'react';
 
 import Header from '@components/Header';
 import MultiDropdown from '@components/MultiDropdown';
+import TextBlock from '@components/TextBlock';
 import { Option } from '@store/MultiDropdownStore/MultiDropdownStore';
 
 import Pagination from './components/Pagination';
 import ProductsList from './components/ProductsList';
 import Search from './components/Search';
-import TextBlock from './components/TextBlock';
 import { useFetchData } from './hooks/useFetchList';
 import { useStores } from './hooks/useStores';
 import styles from './ProductListPage.module.scss';
@@ -28,7 +28,13 @@ const ProductListPage = () => {
   return (
     <>
       <Header />
-      <TextBlock />
+      <TextBlock
+        title="Products"
+        subtitle={
+          'We display products based on the latest products we have, if you want\n' +
+          'to see our old products please enter the name of the item'
+        }
+      />
       <div className={classNames('container', styles.wrapper)}>
         <Search productListStore={productListStore} />
         <MultiDropdown

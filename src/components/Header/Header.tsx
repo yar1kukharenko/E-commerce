@@ -9,7 +9,9 @@ import styles from './Header.module.scss';
 
 const Header = () => (
   <div className={styles.header}>
-    <Logo />
+    <Link to="/">
+      <Logo />
+    </Link>
     <Navigation />
     <Link to="/">
       <BagIcon width={30} height={30} />

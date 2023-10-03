@@ -12,12 +12,12 @@ const Navigation = () => (
         Products
       </Text>
     </Link>
-    <Link className={styles.link} to="/">
+    <Link className={styles.link} to="/categories">
       <Text color="accent" view="p-18">
         Categories
       </Text>
     </Link>
-    <Link className={styles.link} to="/">
+    <Link className={styles.link} to="/aboutus">
       <Text color="accent" view="p-18">
         About us
       </Text>

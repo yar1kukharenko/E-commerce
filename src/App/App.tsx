@@ -5,6 +5,8 @@ import { useQueryParamsStoreInit } from '@store/RootStore/hooks/useQueryParamsSt
 
 import { DropdownStoreProvider } from '../context/DropdownStoreContext';
 
+import AboutUsPage from './pages/AboutUsPage';
+import CategoriesPage from './pages/CategoriesPage';
 import ProductListPage from './pages/ProductListPage';
 import ProductPage from './pages/ProductPage/ProductPage';
 
@@ -19,6 +21,8 @@ const App = () => {
         <Route path="/product">
           <Route path=":id" element={<ProductPage />} />
         </Route>
+        <Route path="/categories" element={<CategoriesPage />} />
+        <Route path="/aboutus" element={<AboutUsPage />} />
       </Routes>
     </DropdownStoreProvider>
   );

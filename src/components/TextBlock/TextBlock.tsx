@@ -2,16 +2,20 @@ import * as React from 'react';
 
 import Text from '@components/Text';
 
-import styles from '../../ProductListPage.module.scss';
+import styles from './TextBlock.module.scss';
 
-const TextBlock = () => (
+export type TextBlockProps = {
+  title: string;
+  subtitle: string;
+};
+
+const TextBlock: React.FC<TextBlockProps> = ({ title, subtitle }) => (
   <div className={styles.textBlock}>
     <Text view="title" className={styles.title}>
-      Products
+      {title}
     </Text>
     <Text view="p-20" className={styles.subtitle}>
-      We display products based on the latest products we have, if you want to see our old products please enter the
-      name of the item
+      {subtitle}
     </Text>
   </div>
 );

@@ -1,0 +1,24 @@
+@import "@styles/vars";
+
+.text {
+  display: flex;
+  flex-direction: column;
+  gap: $space-xl;
+  margin-bottom: 100px;
+
+}
+
+.textBlock {
+  display: flex;
+  gap: $space-xs;
+  flex-direction: column;
+
+}
+
+.subheading {
+  font-size: 23px;
+}
+
+.p {
+  font-size: 20px;
+}

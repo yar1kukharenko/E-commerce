@@ -2,6 +2,7 @@ import classNames from 'classnames';
 import * as React from 'react';
 
 import Text from '@components/Text';
+import { CONFIG } from '@config/config';
 
 import styles from './Product.module.scss';
 
@@ -23,12 +24,14 @@ const Product: React.FC<ProductProps> = ({
   image,
   title,
 }: ProductProps) => {
-  const placeholderImage = 'src/assets/images/image_not_found.png';
-  const displayedImage = image && image[0] ? image[0] : placeholderImage;
+  const [currentImage, setCurrentImage] = React.useState(image && image[0] ? image[0] : CONFIG.PLACEHOLDERIMAGE);
+  const handleImageError = () => {
+    setCurrentImage(CONFIG.PLACEHOLDERIMAGE);
+  };
   return (
     <div className={classNames(styles.product_page, className)}>
       <div className={styles.product_page__image}>
-        <img className={styles.product_page__image_src} src={displayedImage} alt="Product" />
+        <img className={styles.product_page__image_src} onError={handleImageError} src={currentImage} alt="Product" />
       </div>
       <div className={styles.product_page__body}>
         <div className={styles.product_page__top}>
