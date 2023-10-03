@@ -1,4 +1,4 @@
-import { observer, useLocalStore } from 'mobx-react-lite';
+import { observer, useLocalObservable } from 'mobx-react-lite';
 
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -9,7 +9,7 @@ import { CategoriesStore } from '@store/CategoriesStore/CategoriesStore';
 import styles from './Categories.module.scss';
 
 const CategoriesList = () => {
-  const categoriesStore = useLocalStore(() => new CategoriesStore());
+  const categoriesStore = useLocalObservable(() => new CategoriesStore());
   React.useEffect(() => {
     categoriesStore.fetchCategories();
   }, [categoriesStore]);
