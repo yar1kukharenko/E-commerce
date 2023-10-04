@@ -1,3 +1,4 @@
+import classNames from 'classnames';
 import * as React from 'react';
 import { Link } from 'react-router-dom';
 
@@ -5,8 +6,12 @@ import Text from '@components/Text';
 
 import styles from './Navigation.module.scss';
 
-const Navigation = () => (
-  <nav className={styles.nav}>
+export type NavigationProps = {
+  isOpen?: boolean;
+};
+
+const Navigation: React.FC<NavigationProps> = ({ isOpen = false }) => (
+  <nav className={classNames(styles.nav, isOpen && styles.nav_active)}>
     <Link className={styles.link} to="/">
       <Text color="accent" view="p-18">
         Products

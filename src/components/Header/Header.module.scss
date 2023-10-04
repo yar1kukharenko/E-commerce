@@ -1,7 +1,25 @@
+@import "@styles/vars";
+
 .header {
   width: 100%;
   display: flex;
   align-items: center;
   background-color: #FFFFFF;
-  padding: 0 100px;
+  max-width: 2560px;
+  padding: 0 6.94vw;
+  justify-content: space-between;
+}
+
+.menuIcon {
+  z-index: 100;
+
+  @media (min-width: 1024px) {
+    display: none;
+  }
+}
+
+
+.button_wrapper {
+  display: flex;
+  gap: $space-l;
 }
