@@ -8,10 +8,10 @@ import MultiDropdown from '@components/MultiDropdown';
 import TextBlock from '@components/TextBlock';
 import { Option } from '@store/MultiDropdownStore/MultiDropdownStore';
 
-import Pagination from './components/Pagination';
 import ProductsList from './components/ProductsList';
 import Search from './components/Search';
 import { useFetchData } from './hooks/useFetchList';
+import { useInfiniteScroll } from './hooks/useInfiniteScroll';
 import { useStores } from './hooks/useStores';
 import styles from './ProductListPage.module.scss';
 
@@ -24,6 +24,10 @@ const ProductListPage = () => {
     }
     return values.map(({ value }) => value).join(', ');
   };
+
+  useInfiniteScroll(() => {
+    productListStore.fetchDataAndUpdateState();
+  }, productListStore.hasNextPage);
 
   return (
     <>
@@ -45,7 +49,6 @@ const ProductListPage = () => {
           getTitle={getTitle}
         />
         <ProductsList productListStore={productListStore} />
-        <Pagination productListStore={productListStore} />
       </div>
     </>
   );

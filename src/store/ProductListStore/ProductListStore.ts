@@ -4,6 +4,7 @@ import { CategoriesStore } from '@store/CategoriesStore/CategoriesStore';
 import { Option } from '@store/MultiDropdownStore/MultiDropdownStore';
 import { ProductsStore } from '@store/ProductsStore/ProductsStore';
 import rootStore from '@store/RootStore';
+import { RequestState } from '@store/RootStore/RequestState';
 
 type PrivateFields = '_searchValue' | '_selectedCategories' | '_currentPage' | '_productsStore' | '_categoriesStore';
 
@@ -93,6 +94,10 @@ export class ProductListStore {
 
   get searchValue(): string {
     return this._searchValue;
+  }
+
+  get getRequestState(): RequestState {
+    return this._productsStore.getRequestState;
   }
 
   setSearchValue(value: string) {

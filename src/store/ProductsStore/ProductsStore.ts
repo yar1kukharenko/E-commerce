@@ -92,7 +92,11 @@ export class ProductsStore {
   processFetchProductsResult(result: AxiosResponse<RawProductAPI[]>) {
     try {
       const products: ProductModel[] = result.data.map(normalizeRawProduct);
-      this.setProducts(normalizeCollection(products, (product) => product.id));
+      this._products = {
+        ...this._products,
+        entities: { ...this._products.entities, ...normalizeCollection(products, (product) => product.id).entities },
+        order: [...this._products.order, ...normalizeCollection(products, (product) => product.id).order],
+      };
       this.setHasNextPage(products.length === CONFIG.PRODUCTS_PER_PAGE);
       this._requestState.set(Meta.success);
     } catch (e) {
