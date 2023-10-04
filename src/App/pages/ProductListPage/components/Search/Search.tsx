@@ -26,7 +26,7 @@ const Search: React.FC<SearchProps> = ({ productListStore }) => {
         onChange={handleSearchInputChange}
       />
       <Button onClick={productListStore.handleSearch} className={styles.search__button}>
-        Find Now
+        Find&nbsp;Now
       </Button>
     </div>
   );

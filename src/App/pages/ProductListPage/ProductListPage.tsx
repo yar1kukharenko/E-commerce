@@ -32,14 +32,14 @@ const ProductListPage = () => {
   return (
     <>
       <Header />
-      <TextBlock
-        title="Products"
-        subtitle={
-          'We display products based on the latest products we have, if you want\n' +
-          'to see our old products please enter the name of the item'
-        }
-      />
       <div className={classNames('container', styles.wrapper)}>
+        <TextBlock
+          title="Products"
+          subtitle={
+            'We display products based on the latest products we have, if you want\n' +
+            'to see our old products please enter the name of the item'
+          }
+        />
         <Search productListStore={productListStore} />
         <MultiDropdown
           className={styles.dropdown}
