@@ -42,16 +42,12 @@ export class ProductModel {
   }
 
   @computed get formattedPrice(): string {
-    return `$${this._price.toFixed(2)}`;
+    return `${this._price.toFixed(2)}$`;
   }
 
   @computed get image(): string[] | null {
     return this._images.length > 0 ? this._images : null;
   }
-
-  // @computed get image(): string | null {
-  //   return this._images && this._images.length > 0 ? this._images[0] : null;
-  // }
 
   @action setPrice(price: number): void {
     this._price = price;

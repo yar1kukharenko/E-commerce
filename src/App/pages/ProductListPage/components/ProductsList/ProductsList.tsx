@@ -17,7 +17,7 @@ type ProductsListProps = {
 const ProductsList: React.FC<ProductsListProps> = ({ productListStore }) => {
   const navigate = useNavigate();
   const cartStore = useCartStore();
-  const idArray = Array.from(cartStore.items.entries()).map((item) => item[0].id);
+
   return (
     <div className={styles.product_list}>
       {productListStore.products.map((product) => (
@@ -27,16 +27,16 @@ const ProductsList: React.FC<ProductsListProps> = ({ productListStore }) => {
           images={product.image}
           captionSlot={product.category.name}
           subtitle={product.description}
-          contentSlot={`${product.price}$`}
+          contentSlot={`${product.formattedPrice}`}
           actionSlot={
             <Button
-              disabled={idArray.includes(product.id)}
+              disabled={cartStore.idArray.includes(product.id)}
               onClick={(e) => {
                 e.stopPropagation();
                 cartStore.addProduct(product);
               }}
             >
-              Add to Cart
+              {cartStore.idArray.includes(product.id) ? 'In Cart' : 'Add to Cart'}
             </Button>
           }
           onClick={() => navigate(`/product/${product.id}`)}

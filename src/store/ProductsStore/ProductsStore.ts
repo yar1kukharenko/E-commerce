@@ -53,7 +53,6 @@ export class ProductsStore {
       hasNextPage: computed,
 
       fetchProducts: action,
-      // processFetchProductsResult: action,
       fetchProduct: action,
       processFetchProductResult: action,
 

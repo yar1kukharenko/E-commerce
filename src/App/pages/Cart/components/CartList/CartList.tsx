@@ -1,6 +1,7 @@
 import { observer } from 'mobx-react-lite';
 
 import * as React from 'react';
+import { Link } from 'react-router-dom';
 
 import Button from '@components/Button';
 import Text from '@components/Text';
@@ -12,7 +13,13 @@ import styles from './CartList.module.scss';
 const CartList = () => {
   const cartStore = useCartStore();
 
-  const [placeholderImage, setPlaceholderImage] = React.useState(CONFIG.PLACEHOLDERIMAGE);
+  const placeholderImage = CONFIG.PLACEHOLDERIMAGE;
+
+  const handleError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+    const image = e.currentTarget as HTMLImageElement;
+    image.src = CONFIG.PLACEHOLDERIMAGE;
+  };
+
   return (
     <div className={styles.cartlist}>
       {Array.from(cartStore.items.entries()).map(([product]) => (
@@ -21,16 +28,18 @@ const CartList = () => {
             <img
               className={styles.image}
               src={product.image[0] || placeholderImage}
-              onError={() => setPlaceholderImage(CONFIG.PLACEHOLDERIMAGE)}
+              onError={handleError}
               alt="Product"
             />
             <Text view="p-20" weight="normal">
-              {product.title}
+              <Link className={styles.link} to={`/product/${product.id}`}>
+                {product.title}
+              </Link>
             </Text>
           </div>
           <div className={styles.rightside}>
             <Text view="p-20" weight="medium">
-              {product.price}$
+              {product.formattedPrice}
             </Text>
             <Button className={styles.deleteButton} type="button" onClick={() => cartStore.removeProduct(product)}>
               <Text view="button">Удалить</Text>

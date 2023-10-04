@@ -34,9 +34,8 @@ const ProductPage = () => {
       cartStore.addProduct(productsStore.currentProduct);
     }
   };
-  const idArray = Array.from(cartStore.items.entries()).map((item) => item[0].id);
   if (productsStore.currentProduct) {
-    const { image, title, description, price, category } = productsStore.currentProduct;
+    const { image, title, description, price, category, formattedPrice } = productsStore.currentProduct;
     return (
       <>
         <Header />
@@ -46,11 +45,11 @@ const ProductPage = () => {
             image={image}
             title={title}
             description={description}
-            price={`${price}$`}
+            price={formattedPrice}
             actionSlotLeft={<Button>Buy Now</Button>}
             actionSlotRight={
-              <Button disabled={idArray.includes(productsStore.currentProduct.id)} onClick={addToCart}>
-                Add to Cart
+              <Button disabled={cartStore.idArray.includes(productsStore.currentProduct.id)} onClick={addToCart}>
+                {cartStore.idArray.includes(productsStore.currentProduct.id) ? 'In Cart' : 'Add to Cart'}
               </Button>
             }
           />

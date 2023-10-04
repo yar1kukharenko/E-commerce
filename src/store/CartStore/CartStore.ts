@@ -9,7 +9,7 @@ export class CartStore {
 
   constructor() {
     makeObservable<this, PrivateFields>(this, {
-      items: observable,
+      items: observable.ref,
       total: computed,
 
       addProduct: action,
@@ -24,6 +24,10 @@ export class CartStore {
       total += product.price * count;
     });
     return total;
+  }
+
+  get idArray() {
+    return Array.from(this.items.entries()).map((item) => item[0].id);
   }
 
   addProduct(product: ProductModel, count = 1) {
@@ -45,7 +49,7 @@ export class CartStore {
         const product = new ProductModel({
           id: productData.id,
           title: productData.title,
-          price: productData._price, // Обратите внимание здесь
+          price: productData._price,
           category: productData.category,
           description: productData.description,
           images: productData._images,
