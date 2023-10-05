@@ -22,7 +22,7 @@ const CartList = () => {
 
   return (
     <div className={styles.cartlist}>
-      {Array.from(cartStore.items.entries()).map(([product]) => (
+      {Array.from(cartStore.cartItems.entries()).map(([product]) => (
         <div className={styles.product} key={product.id}>
           <div className={styles.leftside}>
             <img

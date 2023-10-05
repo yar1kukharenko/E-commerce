@@ -6,14 +6,12 @@ import { ProductsStore } from '@store/ProductsStore/ProductsStore';
 import rootStore from '@store/RootStore';
 import { RequestState } from '@store/RootStore/RequestState';
 
-type PrivateFields = '_searchValue' | '_selectedCategories' | '_currentPage' | '_productsStore' | '_categoriesStore';
+type PrivateFields = '_searchValue' | '_selectedCategories' | '_productsStore' | '_categoriesStore';
 
 export class ProductListStore {
   private _searchValue: string = '';
 
   private _selectedCategories: Option[] = [];
-
-  private _currentPage: number = 1;
 
   private _productsStore: ProductsStore;
 
@@ -53,12 +51,11 @@ export class ProductListStore {
     makeObservable<this, PrivateFields>(this, {
       _searchValue: observable,
       _selectedCategories: observable,
-      _currentPage: observable,
       _productsStore: observable,
       _categoriesStore: observable,
 
       handleSearch: action,
-      handlePageChange: action,
+
       handleOnChange: action,
       dispose: action,
       fetchDataAndUpdateState: action,
@@ -68,7 +65,6 @@ export class ProductListStore {
       fetchProducts: action,
       fetchCategories: action,
       setSelectedCategories: action.bound,
-      setCurrentPage: action.bound,
     });
   }
 
@@ -104,14 +100,6 @@ export class ProductListStore {
     this._searchValue = value;
   }
 
-  setCurrentPage(page: number) {
-    this._currentPage = page;
-  }
-
-  get currentPage() {
-    return this._currentPage;
-  }
-
   async fetchCategories() {
     await this._categoriesStore.fetchCategories();
   }
@@ -139,9 +127,8 @@ export class ProductListStore {
   async fetchProducts() {
     const { searchValue } = this;
     const { selectedCategories } = this;
-    const page = Number(rootStore.query.getParam('page') || 1);
 
-    await this._productsStore.fetchProducts(searchValue, selectedCategories, page);
+    await this._productsStore.fetchProducts(searchValue, selectedCategories);
   }
 
   async fetchDataAndUpdateState() {
@@ -151,33 +138,20 @@ export class ProductListStore {
   }
 
   handleSearch = () => {
-    this._productsStore.fetchProducts(this.searchValue, this.selectedCategories, 1);
+    this._productsStore.fetchProducts(this.searchValue, this.selectedCategories);
     this._updateUrl({
       search: this._searchValue,
       categories: this._selectedCategories.map((c) => c.key).join(','),
-      page: String(this._currentPage),
     });
-    this.setCurrentPage(1);
   };
-
-  handlePageChange(newPage: number) {
-    this._productsStore.fetchProducts(this.searchValue, this.selectedCategories, newPage);
-    this._updateUrl({
-      search: this._searchValue,
-      categories: this._selectedCategories.map((c) => c.key).join(','),
-      page: String(newPage),
-    });
-    this.setCurrentPage(newPage);
-  }
 
   handleOnChange(options: Option[]) {
     this.setSelectedCategories(options);
     this._updateUrl({
       search: this._searchValue,
       categories: this._selectedCategories.map((c) => c.key).join(','),
-      page: String(this._currentPage),
     });
-    this._productsStore.fetchProducts(this.searchValue, this.selectedCategories, 1);
+    this._productsStore.fetchProducts(this.searchValue, this.selectedCategories);
   }
 
   dispose() {

@@ -5,17 +5,26 @@ import { ProductModel } from '@store/models/Products';
 type PrivateFields = 'items';
 
 export class CartStore {
-  items = observable.map();
+  private items = observable.map();
 
   constructor() {
     makeObservable<this, PrivateFields>(this, {
       items: observable.ref,
+
       total: computed,
+      cartItems: computed,
+      idArray: computed,
 
       addProduct: action,
       removeProduct: action,
+      saveToLocalStorage: action,
+      loadFromLocalStorage: action,
     });
     this.loadFromLocalStorage();
+  }
+
+  get cartItems() {
+    return this.items;
   }
 
   get total() {

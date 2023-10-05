@@ -64,14 +64,13 @@ export class ProductsStore {
     this._products = products;
   }
 
-  static buildProductsURL(title?: string, categories: Option[] = [], page: number = 1, id?: number): string {
+  static buildProductsURL(title?: string, categories: Option[] = [], offset: number = 0, id?: number): string {
     const params = new URLSearchParams();
     if (title) params.append('title', title);
     if (categories.length) params.append('categoryId', categories.map((c) => c.key).join(','));
-    if (page) {
-      params.append('offset', `${(page - 1) * CONFIG.PRODUCTS_PER_PAGE}`);
-      params.append('limit', `${CONFIG.PRODUCTS_PER_PAGE}`);
-    }
+
+    params.append('offset', `${offset}`);
+    params.append('limit', `${CONFIG.PRODUCTS_PER_PAGE}`);
 
     return id ? `products/${id}` : `products?${params.toString()}`;
   }
@@ -106,15 +105,17 @@ export class ProductsStore {
     }
   }
 
-  fetchProducts = async (title?: string, categories: Option[] = [], page: number = 1) => {
+  fetchProducts = async (title?: string, categories: Option[] = []) => {
     if (this._requestState.isLoading) {
       return;
     }
 
     this._requestState.set(Meta.loading);
 
+    const offset = this.products.length || 0;
+
     if (categories.length === 0) {
-      const url = getApiUrl(ProductsStore.buildProductsURL(title, [], page));
+      const url = getApiUrl(ProductsStore.buildProductsURL(title, [], offset));
       try {
         const response = await axios.get<RawProductAPI[]>(url);
         runInAction(() => {
@@ -131,7 +132,7 @@ export class ProductsStore {
     }
 
     const requests = categories.map((category) => {
-      const url = getApiUrl(ProductsStore.buildProductsURL(title, [category], page));
+      const url = getApiUrl(ProductsStore.buildProductsURL(title, [category], offset));
       return axios.get<RawProductAPI[]>(url);
     });
 
