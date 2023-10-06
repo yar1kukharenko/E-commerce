@@ -21,7 +21,7 @@ export const RelatedProducts: React.FC<RelatedProductsProps> = ({ category }) =>
   }, [relatedProducts]);
 
   const navigate = useNavigate();
-  const { query, cart, dropdown } = rootStore;
+  const { cart } = rootStore;
 
   return (
     <>

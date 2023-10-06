@@ -31,7 +31,7 @@ export class ProductListStore {
 
     this._updateUrl = updateUrl;
 
-    const { query, cart, dropdown } = rootStore;
+    const { query } = rootStore;
 
     this._searchParamsReaction = reaction(
       () => query.getParam('categories'),

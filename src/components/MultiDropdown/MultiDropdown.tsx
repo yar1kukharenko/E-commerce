@@ -22,7 +22,7 @@ export type MultiDropDownProps = {
   getTitle: (value: Option[]) => string;
 };
 const MultiDropDown: React.FC<MultiDropDownProps> = ({ className, getTitle, options, disabled, onChange, value }) => {
-  const { query, cart, dropdown } = rootStore;
+  const { dropdown } = rootStore;
   if (!dropdown) {
     throw new Error('DropdownStore is not available!');
   }
