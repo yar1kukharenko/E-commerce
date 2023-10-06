@@ -39,6 +39,10 @@ export class CartStore {
     return Array.from(this.items.entries()).map((item) => item[0].id);
   }
 
+  get uniqueProductCount() {
+    return this.items.size;
+  }
+
   addProduct(product: ProductModel, count = 1) {
     const currentCount = this.items.get(product) || 0;
     this.items.set(product, currentCount + count);

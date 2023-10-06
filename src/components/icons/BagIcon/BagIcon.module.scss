@@ -1,0 +1,15 @@
+@import "@styles/vars";
+
+.productCount {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  background-color: $text-accent;
+  color: white;
+  padding: 1px 5px;
+  border-radius: 100%;
+}
+
+.bagIconWrapper {
+  position: relative;
+}
