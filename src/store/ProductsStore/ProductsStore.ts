@@ -26,8 +26,24 @@ export class ProductsStore {
 
   private _hasNextPage: boolean = true;
 
+  private _previousTitle: string | undefined;
+
+  private _previousCategories: Option[] = [];
+
+  private static areArraysEqual(arr1: any[], arr2: any[]): boolean {
+    return JSON.stringify(arr1) === JSON.stringify(arr2);
+  }
+
   get products(): ProductModel[] {
     return linearizeCollection(this._products);
+  }
+
+  setPreviousTitle(previousTitle: string | undefined) {
+    this._previousTitle = previousTitle;
+  }
+
+  setPreviousCategories(previousCategories: Option[]) {
+    this._previousCategories = previousCategories;
   }
 
   get currentProduct(): ProductModel | null {
@@ -55,6 +71,9 @@ export class ProductsStore {
       fetchProducts: action,
       fetchProduct: action,
       processFetchProductResult: action,
+      clearProducts: action,
+      setPreviousTitle: action,
+      setPreviousCategories: action,
 
       setProducts: action.bound,
     });
@@ -62,6 +81,10 @@ export class ProductsStore {
 
   setProducts(products: CollectionModel<number, ProductModel>) {
     this._products = products;
+  }
+
+  clearProducts() {
+    this._products = getInitialCollectionModel();
   }
 
   static buildProductsURL(title?: string, categories: Option[] = [], offset: number = 0, id?: number): string {
@@ -88,14 +111,21 @@ export class ProductsStore {
     }
   }
 
-  processFetchProductsResult(result: AxiosResponse<RawProductAPI[]>) {
+  processFetchProductsResult(result: AxiosResponse<RawProductAPI[]>, isNewSearch: boolean) {
     try {
       const products: ProductModel[] = result.data.map(normalizeRawProduct);
-      this._products = {
-        ...this._products,
-        entities: { ...this._products.entities, ...normalizeCollection(products, (product) => product.id).entities },
-        order: [...this._products.order, ...normalizeCollection(products, (product) => product.id).order],
-      };
+      const newProducts = normalizeCollection(products, (product) => product.id);
+
+      if (isNewSearch) {
+        this._products = newProducts;
+      } else {
+        this._products = {
+          ...this._products,
+          entities: { ...this._products.entities, ...newProducts.entities },
+          order: [...this._products.order, ...newProducts.order],
+        };
+      }
+
       this.setHasNextPage(products.length === CONFIG.PRODUCTS_PER_PAGE);
       this._requestState.set(Meta.success);
     } catch (e) {
@@ -110,17 +140,22 @@ export class ProductsStore {
       return;
     }
 
+    const isNewSearch =
+      title !== this._previousTitle || !ProductsStore.areArraysEqual(categories, this._previousCategories);
+
     this._requestState.set(Meta.loading);
 
     const offset = this.products.length || 0;
 
     if (categories.length === 0) {
-      const url = getApiUrl(ProductsStore.buildProductsURL(title, [], offset));
+      const url = getApiUrl(ProductsStore.buildProductsURL(title, categories, offset));
       try {
         const response = await axios.get<RawProductAPI[]>(url);
         runInAction(() => {
-          this.processFetchProductsResult(response);
+          this.processFetchProductsResult(response, isNewSearch);
         });
+        this._previousTitle = title;
+        this._previousCategories = categories.slice();
       } catch (error) {
         runInAction(() => {
           devLog(error);

@@ -138,6 +138,9 @@ export class ProductListStore {
   }
 
   handleSearch = () => {
+    this._productsStore.clearProducts(); // очищаем данные
+    this._productsStore.setPreviousTitle(undefined); // сброс предыдущего значения
+    this._productsStore.setPreviousCategories([]); // сброс предыдущего значения
     this._productsStore.fetchProducts(this.searchValue, this.selectedCategories);
     this._updateUrl({
       search: this._searchValue,
@@ -146,6 +149,9 @@ export class ProductListStore {
   };
 
   handleOnChange(options: Option[]) {
+    this._productsStore.clearProducts(); // очищаем данные
+    this._productsStore.setPreviousTitle(undefined); // сброс предыдущего значения
+    this._productsStore.setPreviousCategories([]); // сброс предыдущего значения
     this.setSelectedCategories(options);
     this._updateUrl({
       search: this._searchValue,
