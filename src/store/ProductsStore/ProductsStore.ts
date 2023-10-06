@@ -98,10 +98,21 @@ export class ProductsStore {
     return id ? `products/${id}` : `products?${params.toString()}`;
   }
 
-  processMultipleCategoriesResult(rawProducts: RawProductAPI[]) {
+  processMultipleCategoriesResult(rawProducts: RawProductAPI[], isNewSearch: boolean) {
     try {
       const products: ProductModel[] = rawProducts.map(normalizeRawProduct);
-      this.setProducts(normalizeCollection(products, (product) => product.id));
+      const newProducts = normalizeCollection(products, (product) => product.id);
+
+      if (isNewSearch) {
+        this._products = newProducts;
+      } else {
+        this._products = {
+          ...this._products,
+          entities: { ...this._products.entities, ...newProducts.entities },
+          order: [...this._products.order, ...newProducts.order],
+        };
+      }
+
       this.setHasNextPage(products.length === CONFIG.PRODUCTS_PER_PAGE);
       this._requestState.set(Meta.success);
     } catch (e) {
@@ -154,6 +165,7 @@ export class ProductsStore {
         runInAction(() => {
           this.processFetchProductsResult(response, isNewSearch);
         });
+
         this._previousTitle = title;
         this._previousCategories = categories.slice();
       } catch (error) {
@@ -163,8 +175,11 @@ export class ProductsStore {
           this.setProducts(getInitialCollectionModel());
         });
       }
+
       return;
     }
+    this._previousTitle = title;
+    this._previousCategories = categories.slice();
 
     const requests = categories.map((category) => {
       const url = getApiUrl(ProductsStore.buildProductsURL(title, [category], offset));
@@ -175,7 +190,7 @@ export class ProductsStore {
       const responses = await Promise.all(requests);
       runInAction(() => {
         const allProducts = responses.flatMap((response) => response.data);
-        this.processMultipleCategoriesResult(allProducts);
+        this.processMultipleCategoriesResult(allProducts, isNewSearch);
       });
     } catch (error) {
       runInAction(() => {
