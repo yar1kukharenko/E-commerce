@@ -74,6 +74,22 @@ export class ProductListStore {
     return this._productsStore.hasNextPage;
   }
 
+  get isEmpty() {
+    return this._productsStore.isEmpty;
+  }
+
+  get isEndOfProducts(): boolean {
+    return this._productsStore.isEndOfProducts;
+  }
+
+  get isNothingFound(): boolean {
+    return this._productsStore.isNothingFound;
+  }
+
+  get isError(): boolean {
+    return this._productsStore.isError;
+  }
+
   get categories() {
     return this._categoriesStore.categories;
   }

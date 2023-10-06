@@ -46,7 +46,6 @@ const ProductPage = () => {
             title={title}
             description={description}
             price={formattedPrice}
-            actionSlotLeft={<Button>Buy Now</Button>}
             actionSlotRight={
               <Button disabled={cart.idArray.includes(productsStore.currentProduct.id)} onClick={addToCart}>
                 {cart.idArray.includes(productsStore.currentProduct.id) ? 'In Cart' : 'Add to Cart'}

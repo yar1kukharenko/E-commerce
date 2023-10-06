@@ -91,6 +91,11 @@ export class ProductsStore {
       setPreviousTitle: action,
       setPreviousCategories: action,
       setProducts: action.bound,
+
+      isEmpty: computed,
+      isEndOfProducts: computed,
+      isNothingFound: computed,
+      isError: computed,
     });
   }
 
@@ -116,6 +121,22 @@ export class ProductsStore {
 
   get getRequestState(): RequestState {
     return this._requestState;
+  }
+
+  get isEmpty(): boolean {
+    return !this._products.order.length && this._requestState.isInitial;
+  }
+
+  get isEndOfProducts(): boolean {
+    return !this._hasNextPage && !this.isEmpty && this._requestState.isSuccess;
+  }
+
+  get isNothingFound(): boolean {
+    return !this._products.order.length && this._requestState.isSuccess;
+  }
+
+  get isError(): boolean {
+    return this._requestState.isError;
   }
 
   setProducts(products: CollectionModel<number, ProductModel>) {

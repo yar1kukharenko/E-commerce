@@ -6,4 +6,9 @@
   gap: $space-xs;
   justify-items: stretch;
   margin-bottom: 100px;
+  @media (max-width: 425px) {
+    grid-template-columns: repeat(auto-fill, minmax(274px, 1fr));
+
+  }
+
 }
