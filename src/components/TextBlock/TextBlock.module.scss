@@ -1,0 +1,18 @@
+@import "@styles/vars";
+
+.textBlock {
+  display: flex;
+  flex-direction: column;
+  max-width: 653px;
+  margin: 100px auto 48px;
+  gap: $space-m;
+
+}
+
+.title {
+  text-align: center;
+}
+
+.subtitle {
+  text-align: center;
+}

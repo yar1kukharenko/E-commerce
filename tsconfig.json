@@ -1,16 +1,35 @@
 {
   "compilerOptions": {
-    "baseUrl": "src",
+    "baseUrl": ".",
     "paths": {
-      "components": ["components"],
+      "@components/*": [
+        "src/components/*"
+      ],
+      "@config/*": [
+        "src/config/*"
+      ],
+      "@styles/*": [
+        "src/styles/*"
+      ],
+      "@utils/*": [
+        "src/utils/*"
+      ],
+      "@models/*": [
+        "src/models/*"
+      ],
+      "@store/*": [
+        "src/store/*"
+      ],
+      "@assets/*": [
+        "src/assets/*"
+      ],
+      "@hooks/*": [
+        "src/hooks/*"
+      ]
     },
-    //Не создавать выходные файлы компилятора, например исходный код JavaScript. Для нас это делает Babel.
     "noEmit": true,
-    //Разрешите импорт файлов .js, а не только файлы .ts и .tsx.
     "allowJs": true,
-    //Включает создание файлов исходной карты. Эти файлы позволяют отладчикам и другим инструментам отображать исходный код.
     "sourceMap": true,
-    //Флаг strict включает широкий диапазон действий при проверке типов, что приводит к более сильным гарантиям правильности программы.
     "strict": true,
     "strictNullChecks": true,
     "skipLibCheck": true,
@@ -20,8 +39,13 @@
     "jsx": "react",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
   },
-
-  "include": ["src/**/*"], // какие файлы включены в проверку
-  "exclude": ["node_modules"] // какие файлы исключены
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
 }

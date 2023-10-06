@@ -1,0 +1,43 @@
+@import "@styles/vars";
+
+.nav {
+  display: flex;
+  gap: $space-xl;
+  align-items: center;
+  margin: 0 auto;
+  transition: transform 0.5s ease-in-out;
+}
+
+.link {
+  font-weight: 600;
+  line-height: 22px;
+}
+
+
+@media (max-width: 1024px) {
+  .nav {
+    position: absolute;
+    flex-direction: column;
+    background-color: $icon_color-accent;
+    width: 100%;
+    top: 0;
+    height: 100vh;
+    z-index: 10;
+    left: 0;
+    transform: translateY(-100%);
+    justify-content: center;
+    gap: 100px;
+
+    p {
+      color: white;
+      font-size: 30px;
+    }
+
+    &_active {
+      top: 0;
+      transform: translateY(0);
+    }
+  }
+
+
+}

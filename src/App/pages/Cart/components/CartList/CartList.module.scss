@@ -1,0 +1,51 @@
+@import "@styles/vars";
+
+.cartlist {
+  border-top: 1px solid black;
+}
+
+.product {
+  display: flex;
+  border-bottom: 1px solid black;
+  align-items: center;
+  justify-content: space-between;
+  padding: $space-xs;
+}
+
+.image {
+  aspect-ratio: 136/136;
+  max-width: 120px;
+  object-fit: cover;
+}
+
+.leftside {
+  display: flex;
+  align-items: center;
+  gap: $space-s;
+}
+
+.rightside {
+  display: flex;
+  align-items: center;
+  gap: $space-xl;
+}
+
+.deleteButton {
+  background-color: $button-tr-primary-bg-delete;
+
+  &:hover {
+    background-color: $button-tr-primary-bg-delete-hover;
+  }
+}
+
+.link:hover {
+  color: $text-accent;
+}
+
+@media (max-width: 768px) {
+  .product {
+    flex-direction: column;
+  }
+
+ 
+}
