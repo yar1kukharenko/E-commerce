@@ -7,15 +7,15 @@ import BackButton from '@components/BackButton';
 import Button from '@components/Button';
 import Header from '@components/Header';
 import Loader from '@components/Loader';
-import { useCartStore } from '@hooks/useCartStore';
 import { ProductsStore } from '@store/ProductsStore/ProductsStore';
+import rootStore from '@store/RootStore';
 
 import Product from './components/Product';
 import RelatedProducts from './components/RelatedProducts';
 import styles from './ProductPageStyles.module.scss';
 
 const ProductPage = () => {
-  const cartStore = useCartStore();
+  const { cart } = rootStore;
   const { id } = useParams();
   const productsStore = React.useMemo(() => new ProductsStore(), [ProductsStore]);
   React.useEffect(() => {
@@ -31,11 +31,11 @@ const ProductPage = () => {
 
   const addToCart = () => {
     if (productsStore.currentProduct) {
-      cartStore.addProduct(productsStore.currentProduct);
+      cart.addProduct(productsStore.currentProduct);
     }
   };
   if (productsStore.currentProduct) {
-    const { image, title, description, price, category, formattedPrice } = productsStore.currentProduct;
+    const { image, title, description, category, formattedPrice } = productsStore.currentProduct;
     return (
       <>
         <Header />
@@ -48,8 +48,8 @@ const ProductPage = () => {
             price={formattedPrice}
             actionSlotLeft={<Button>Buy Now</Button>}
             actionSlotRight={
-              <Button disabled={cartStore.idArray.includes(productsStore.currentProduct.id)} onClick={addToCart}>
-                {cartStore.idArray.includes(productsStore.currentProduct.id) ? 'In Cart' : 'Add to Cart'}
+              <Button disabled={cart.idArray.includes(productsStore.currentProduct.id)} onClick={addToCart}>
+                {cart.idArray.includes(productsStore.currentProduct.id) ? 'In Cart' : 'Add to Cart'}
               </Button>
             }
           />

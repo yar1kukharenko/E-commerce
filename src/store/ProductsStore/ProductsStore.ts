@@ -1,4 +1,4 @@
-import axios, { AxiosResponse, HttpStatusCode } from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import { action, computed, makeObservable, observable, runInAction } from 'mobx';
 
 import { getApiUrl } from '@config/api';
@@ -30,8 +30,68 @@ export class ProductsStore {
 
   private _previousCategories: Option[] = [];
 
-  private static areArraysEqual(arr1: any[], arr2: any[]): boolean {
+  private static areArraysEqual(arr1: Option[], arr2: Option[]): boolean {
     return JSON.stringify(arr1) === JSON.stringify(arr2);
+  }
+
+  private static getProductsPerPage(): number {
+    return CONFIG.PRODUCTS_PER_PAGE;
+  }
+
+  private handleError(error: unknown): void {
+    devLog(error);
+    this._requestState.set(Meta.error);
+    this.setProducts(getInitialCollectionModel());
+  }
+
+  private handleProductsResult(rawProducts: RawProductAPI[], isNewSearch: boolean) {
+    try {
+      const products: ProductModel[] = rawProducts.map(normalizeRawProduct);
+      const newProducts = normalizeCollection(products, (product) => product.id);
+
+      if (isNewSearch) {
+        this.setProducts(newProducts);
+      } else {
+        this.setProducts({
+          ...this._products,
+          entities: { ...this._products.entities, ...newProducts.entities },
+          order: [...this._products.order, ...newProducts.order],
+        });
+      }
+
+      this.setHasNextPage(products.length === ProductsStore.getProductsPerPage());
+      this._requestState.set(Meta.success);
+    } catch (e) {
+      this.handleError(e);
+    }
+  }
+
+  private static buildProductsURL(title?: string, categories: Option[] = [], offset: number = 0, id?: number): string {
+    const params = new URLSearchParams();
+    if (title) params.append('title', title);
+    if (categories.length) params.append('categoryId', categories.map((c) => c.key).join(','));
+    params.append('offset', `${offset}`);
+    params.append('limit', `${CONFIG.PRODUCTS_PER_PAGE}`);
+    return id ? `products/${id}` : `products?${params.toString()}`;
+  }
+
+  constructor() {
+    makeObservable<this, PrivateFields>(this, {
+      _products: observable.ref,
+      _currentProduct: observable.ref,
+      _hasNextPage: observable,
+      products: computed,
+      currentProduct: computed,
+      hasNextPage: computed,
+      fetchProducts: action,
+      fetchProduct: action,
+
+      processFetchProductResult: action,
+      clearProducts: action,
+      setPreviousTitle: action,
+      setPreviousCategories: action,
+      setProducts: action.bound,
+    });
   }
 
   get products(): ProductModel[] {
@@ -58,27 +118,6 @@ export class ProductsStore {
     return this._requestState;
   }
 
-  constructor() {
-    makeObservable<this, PrivateFields>(this, {
-      _products: observable.ref,
-      _currentProduct: observable.ref,
-      _hasNextPage: observable,
-
-      products: computed,
-      currentProduct: computed,
-      hasNextPage: computed,
-
-      fetchProducts: action,
-      fetchProduct: action,
-      processFetchProductResult: action,
-      clearProducts: action,
-      setPreviousTitle: action,
-      setPreviousCategories: action,
-
-      setProducts: action.bound,
-    });
-  }
-
   setProducts(products: CollectionModel<number, ProductModel>) {
     this._products = products;
   }
@@ -87,75 +126,17 @@ export class ProductsStore {
     this._products = getInitialCollectionModel();
   }
 
-  static buildProductsURL(title?: string, categories: Option[] = [], offset: number = 0, id?: number): string {
-    const params = new URLSearchParams();
-    if (title) params.append('title', title);
-    if (categories.length) params.append('categoryId', categories.map((c) => c.key).join(','));
-
-    params.append('offset', `${offset}`);
-    params.append('limit', `${CONFIG.PRODUCTS_PER_PAGE}`);
-
-    return id ? `products/${id}` : `products?${params.toString()}`;
-  }
-
-  processMultipleCategoriesResult(rawProducts: RawProductAPI[], isNewSearch: boolean) {
-    try {
-      const products: ProductModel[] = rawProducts.map(normalizeRawProduct);
-      const newProducts = normalizeCollection(products, (product) => product.id);
-
-      if (isNewSearch) {
-        this._products = newProducts;
-      } else {
-        this._products = {
-          ...this._products,
-          entities: { ...this._products.entities, ...newProducts.entities },
-          order: [...this._products.order, ...newProducts.order],
-        };
-      }
-
-      this.setHasNextPage(products.length === CONFIG.PRODUCTS_PER_PAGE);
-      this._requestState.set(Meta.success);
-    } catch (e) {
-      devLog(e);
-      this._requestState.set(Meta.error);
-      this.setProducts(getInitialCollectionModel());
-    }
-  }
-
-  processFetchProductsResult(result: AxiosResponse<RawProductAPI[]>, isNewSearch: boolean) {
-    try {
-      const products: ProductModel[] = result.data.map(normalizeRawProduct);
-      const newProducts = normalizeCollection(products, (product) => product.id);
-
-      if (isNewSearch) {
-        this._products = newProducts;
-      } else {
-        this._products = {
-          ...this._products,
-          entities: { ...this._products.entities, ...newProducts.entities },
-          order: [...this._products.order, ...newProducts.order],
-        };
-      }
-
-      this.setHasNextPage(products.length === CONFIG.PRODUCTS_PER_PAGE);
-      this._requestState.set(Meta.success);
-    } catch (e) {
-      devLog(e);
-      this._requestState.set(Meta.error);
-      this.setProducts(getInitialCollectionModel());
-    }
+  setHasNextPage(hasNextPage: boolean) {
+    this._hasNextPage = hasNextPage;
   }
 
   fetchProducts = async (title?: string, categories: Option[] = []) => {
     if (this._requestState.isLoading) {
       return;
     }
-
     const isNewSearch =
       title !== this._previousTitle || !ProductsStore.areArraysEqual(categories, this._previousCategories);
-
     this._requestState.set(Meta.loading);
-
     const offset = this.products.length || 0;
 
     if (categories.length === 0) {
@@ -163,19 +144,15 @@ export class ProductsStore {
       try {
         const response = await axios.get<RawProductAPI[]>(url);
         runInAction(() => {
-          this.processFetchProductsResult(response, isNewSearch);
+          this.handleProductsResult(response.data, isNewSearch);
         });
-
-        this._previousTitle = title;
-        this._previousCategories = categories.slice();
       } catch (error) {
         runInAction(() => {
-          devLog(error);
-          this._requestState.set(Meta.error);
-          this.setProducts(getInitialCollectionModel());
+          this.handleError(error);
         });
       }
-
+      this._previousTitle = title;
+      this._previousCategories = categories.slice();
       return;
     }
     this._previousTitle = title;
@@ -190,20 +167,14 @@ export class ProductsStore {
       const responses = await Promise.all(requests);
       runInAction(() => {
         const allProducts = responses.flatMap((response) => response.data);
-        this.processMultipleCategoriesResult(allProducts, isNewSearch);
+        this.handleProductsResult(allProducts, isNewSearch);
       });
     } catch (error) {
       runInAction(() => {
-        devLog(error);
-        this._requestState.set(Meta.error);
-        this.setProducts(getInitialCollectionModel());
+        this.handleError(error);
       });
     }
   };
-
-  setHasNextPage(hasNextPage: boolean) {
-    this._hasNextPage = hasNextPage;
-  }
 
   fetchProduct = async (id: number) => {
     if (this._requestState.isLoading) {
@@ -212,33 +183,24 @@ export class ProductsStore {
     this._requestState.set(Meta.loading);
     this._currentProduct = null;
     const url = getApiUrl(ProductsStore.buildProductsURL(undefined, [], undefined, id));
-    const result = await axios<RawProductAPI>({
-      method: 'get',
-      url,
-    });
+    const result = await axios.get<RawProductAPI>(url);
     runInAction(() => {
       this.processFetchProductResult(result);
     });
   };
 
   processFetchProductResult(result: AxiosResponse<RawProductAPI>) {
-    if (result.status === HttpStatusCode.Ok) {
-      try {
-        this._requestState.set(Meta.success);
-        const normalizedProduct = normalizeRawProduct(result.data);
-        this._currentProduct = normalizedProduct;
+    try {
+      this._requestState.set(Meta.success);
+      const normalizedProduct = normalizeRawProduct(result.data);
+      this._currentProduct = normalizedProduct;
 
-        if (!this._products.order.includes(normalizedProduct.id)) {
-          this._products.order.push(normalizedProduct.id);
-        }
-        this._products.entities[normalizedProduct.id] = normalizedProduct;
-      } catch (e) {
-        devLog(e);
-        this._requestState.set(Meta.error);
-        this._currentProduct = null;
+      if (!this._products.order.includes(normalizedProduct.id)) {
+        this._products.order.push(normalizedProduct.id);
       }
-    } else {
-      this._requestState.set(Meta.error);
+      this._products.entities[normalizedProduct.id] = normalizedProduct;
+    } catch (e) {
+      this.handleError(e);
     }
   }
 }

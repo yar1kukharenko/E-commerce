@@ -31,8 +31,10 @@ export class ProductListStore {
 
     this._updateUrl = updateUrl;
 
+    const { query, cart, dropdown } = rootStore;
+
     this._searchParamsReaction = reaction(
-      () => rootStore.query.getParam('categories'),
+      () => query.getParam('categories'),
       (categoriesString) => {
         if (typeof categoriesString === 'string') {
           this._selectedCategories = categoriesString

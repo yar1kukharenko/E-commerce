@@ -6,8 +6,8 @@ import { useNavigate } from 'react-router-dom';
 import Button from '@components/Button';
 import Card from '@components/Card';
 import Text from '@components/Text';
-import { useCartStore } from '@hooks/useCartStore';
 import { RelatedProductsStore } from '@store/RelatedProductsStore/RelatedProductsStore';
+import rootStore from '@store/RootStore';
 
 import styles from './RelatedProducts.module.scss';
 
@@ -21,7 +21,7 @@ export const RelatedProducts: React.FC<RelatedProductsProps> = ({ category }) =>
   }, [relatedProducts]);
 
   const navigate = useNavigate();
-  const cartStore = useCartStore();
+  const { query, cart, dropdown } = rootStore;
 
   return (
     <>
@@ -39,13 +39,13 @@ export const RelatedProducts: React.FC<RelatedProductsProps> = ({ category }) =>
             contentSlot={`${product.formattedPrice}`}
             actionSlot={
               <Button
-                disabled={cartStore.idArray.includes(product.id)}
+                disabled={cart.idArray.includes(product.id)}
                 onClick={(e) => {
                   e.stopPropagation();
-                  cartStore.addProduct(product);
+                  cart.addProduct(product);
                 }}
               >
-                {cartStore.idArray.includes(product.id) ? 'In Cart' : 'Add to Cart'}
+                {cart.idArray.includes(product.id) ? 'In Cart' : 'Add to Cart'}
               </Button>
             }
             onClick={() => navigate(`/product/${product.id}`)}

@@ -6,8 +6,8 @@ import { useNavigate } from 'react-router-dom';
 import Button from '@components/Button';
 import Card from '@components/Card';
 import Loader from '@components/Loader';
-import { useCartStore } from '@hooks/useCartStore';
 import { ProductListStore } from '@store/ProductListStore/ProductListStore';
+import rootStore from '@store/RootStore';
 
 import styles from '../../ProductListPage.module.scss';
 
@@ -17,7 +17,7 @@ type ProductsListProps = {
 
 const ProductsList: React.FC<ProductsListProps> = ({ productListStore }) => {
   const navigate = useNavigate();
-  const cartStore = useCartStore();
+  const { cart } = rootStore;
   const { isLoading } = productListStore.getRequestState;
 
   return (
@@ -33,13 +33,13 @@ const ProductsList: React.FC<ProductsListProps> = ({ productListStore }) => {
             contentSlot={`${product.formattedPrice}`}
             actionSlot={
               <Button
-                disabled={cartStore.idArray.includes(product.id)}
+                disabled={cart.idArray.includes(product.id)}
                 onClick={(e) => {
                   e.stopPropagation();
-                  cartStore.addProduct(product);
+                  cart.addProduct(product);
                 }}
               >
-                {cartStore.idArray.includes(product.id) ? 'In Cart' : 'Add to Cart'}
+                {cart.idArray.includes(product.id) ? 'In Cart' : 'Add to Cart'}
               </Button>
             }
             onClick={() => navigate(`/product/${product.id}`)}

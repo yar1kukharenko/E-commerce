@@ -8,8 +8,7 @@ import Input from '@components/Input';
 import OptionItem from '@components/MultiDropdown/components/Option';
 import { useOutsideClick } from '@components/MultiDropdown/hooks/UseOnDocumentClick';
 import { Option } from '@store/MultiDropdownStore/MultiDropdownStore';
-
-import DropdownStoreContext from '../../context/DropdownStoreContext';
+import rootStore from '@store/RootStore';
 
 import { useDropdownLogic, UseSelectedOptions } from './hooks';
 import styles from './MultiDropdown.module.scss';
@@ -23,24 +22,24 @@ export type MultiDropDownProps = {
   getTitle: (value: Option[]) => string;
 };
 const MultiDropDown: React.FC<MultiDropDownProps> = ({ className, getTitle, options, disabled, onChange, value }) => {
-  const dropdownStore = React.useContext(DropdownStoreContext);
-  if (!dropdownStore) {
+  const { query, cart, dropdown } = rootStore;
+  if (!dropdown) {
     throw new Error('DropdownStore is not available!');
   }
 
-  const { filteredOptions, onClickDropdown } = useDropdownLogic(options, dropdownStore, disabled);
-  const { onClickOption } = UseSelectedOptions(onChange, dropdownStore, disabled);
+  const { filteredOptions, onClickDropdown } = useDropdownLogic(options, dropdown, disabled);
+  const { onClickOption } = UseSelectedOptions(onChange, dropdown, disabled);
   const title = React.useMemo(() => getTitle(value), [getTitle, value]);
 
   const inputValue = React.useMemo(() => {
-    if (!dropdownStore.isOpen) {
+    if (!dropdown.isOpen) {
       return value.length === 0 ? '' : title;
     }
-    return dropdownStore.isTyping ? dropdownStore.filter : '';
-  }, [dropdownStore.isOpen, dropdownStore.isTyping, value.length, title, dropdownStore.filter]);
+    return dropdown.isTyping ? dropdown.filter : '';
+  }, [dropdown.isOpen, dropdown.isTyping, value.length, title, dropdown.filter]);
 
   const setFilter = (val: string) => {
-    dropdownStore.setFilter(val);
+    dropdown.setFilter(val);
   };
 
   const rootRef = React.useRef<HTMLDivElement | null>(null);
@@ -49,7 +48,7 @@ const MultiDropDown: React.FC<MultiDropDownProps> = ({ className, getTitle, opti
   useOutsideClick({
     ref: rootRef,
     onOutsideClick: () => {
-      dropdownStore.reset();
+      dropdown.reset();
     },
   });
 
@@ -58,7 +57,7 @@ const MultiDropDown: React.FC<MultiDropDownProps> = ({ className, getTitle, opti
       className={classNames(
         styles.dropdown,
         disabled && styles.dropdown_disabled,
-        dropdownStore.isOpen && styles.dropdown_open,
+        dropdown.isOpen && styles.dropdown_open,
         className,
       )}
       ref={rootRef}
@@ -72,7 +71,7 @@ const MultiDropDown: React.FC<MultiDropDownProps> = ({ className, getTitle, opti
         onChange={setFilter}
         afterSlot={<ArrowDownIcon color="secondary" width={24} height={24} />}
       />
-      {dropdownStore.isOpen && (
+      {dropdown.isOpen && (
         <div className={styles.dropdown__options}>
           {filteredOptions.map((o) => (
             <OptionItem
