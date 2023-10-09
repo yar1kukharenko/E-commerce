@@ -37,13 +37,15 @@ module.exports = {
   target: !isProd ? 'web' : 'browserslist',
   devtool: isProd ? 'hidden-source-map' : 'eval-source-map',
   output: {
-    publicPath: '/',
+    publicPath: '/E-commerce/',
     path: buildPath,
     filename: 'bundle.js',
   },
   plugins: [
     new HtmlWebpackPlugin({
       template: path.join(srcPath, 'index.html'),
+      inject: 'body',
+      publicPath: '/E-commerce/',
     }),
     !isProd && new ReactRefreshWebpackPlugin(),
     new MiniCssExtractPlugin({
