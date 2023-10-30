@@ -37,7 +37,7 @@ module.exports = {
   target: !isProd ? 'web' : 'browserslist',
   devtool: isProd ? 'hidden-source-map' : 'eval-source-map',
   output: {
-    publicPath: '/E-commerce/',
+    publicPath: '/',
     path: buildPath,
     filename: 'bundle.js',
   },
@@ -45,7 +45,7 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: path.join(srcPath, 'index.html'),
       inject: 'body',
-      publicPath: '/E-commerce/',
+      publicPath: '/',
     }),
     !isProd && new ReactRefreshWebpackPlugin(),
     new MiniCssExtractPlugin({

@@ -4,10 +4,11 @@
   width: 100%;
   display: flex;
   align-items: center;
-  background-color: #FFFFFF;
+  background-color: #ffffff;
   max-width: 2560px;
   padding: 0 6.94vw;
   justify-content: space-between;
+  position: relative;
 }
 
 .menuIcon {
@@ -17,7 +18,6 @@
     display: none;
   }
 }
-
 
 .button_wrapper {
   display: flex;
