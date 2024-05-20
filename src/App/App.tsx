@@ -11,6 +11,7 @@ import CategoriesPage from './pages/CategoriesPage';
 import ProductListPage from './pages/ProductListPage';
 import ProductPage from './pages/ProductPage/ProductPage';
 import '@styles/globalStyles.module.scss';
+import GeneratePdfPage from './pages/GeneratePdfPage';
 
 const App = () => {
   useQueryParamsStoreInit();
@@ -24,6 +25,7 @@ const App = () => {
         <Route path="/categories" element={<CategoriesPage />} />
         <Route path="/aboutus" element={<AboutUsPage />} />
         <Route path="/basket" element={<Cart />} />
+        <Route path="/generatepdf" element={<GeneratePdfPage />} />
       </Routes>
     </RootStoreProvider>
   );
