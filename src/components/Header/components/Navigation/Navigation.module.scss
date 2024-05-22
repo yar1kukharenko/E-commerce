@@ -6,13 +6,15 @@
   align-items: center;
   margin: 0 auto;
   transition: transform 0.5s ease-in-out;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
 }
 
 .link {
   font-weight: 600;
   line-height: 22px;
 }
-
 
 @media (max-width: 1024px) {
   .nav {
@@ -38,6 +40,4 @@
       transform: translateY(0);
     }
   }
-
-
 }

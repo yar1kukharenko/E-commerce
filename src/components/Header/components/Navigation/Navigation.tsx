@@ -27,6 +27,11 @@ const Navigation: React.FC<NavigationProps> = ({ isOpen = false }) => (
         About us
       </Text>
     </Link>
+    <Link className={styles.link} to="/generatepdf">
+      <Text color="accent" view="p-18">
+        Generate PDF
+      </Text>
+    </Link>
   </nav>
 );
 
