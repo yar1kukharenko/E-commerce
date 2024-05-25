@@ -30,6 +30,7 @@ describe('BagIcon component', () => {
 
   it('displays the correct product count when cart has products', () => {
     runInAction(() => {
+      // @ts-ignore
       rootStore.cart.uniqueProductCount = 5;
     });
     const { getByText } = render(

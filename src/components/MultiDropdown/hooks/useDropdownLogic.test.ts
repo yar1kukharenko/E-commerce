@@ -14,6 +14,7 @@ const createMockStore = (): DropdownStore => ({
   filter: '',
   isOpen: false,
   isTyping: false,
+  // @ts-ignore
   value: '',
   setOpen: vi.fn(),
   setTyping: vi.fn(),

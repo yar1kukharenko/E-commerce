@@ -6,6 +6,7 @@ describe('useInfiniteScroll', () => {
   let callback: jest.Mock;
 
   beforeEach(() => {
+    // @ts-ignore
     callback = vi.fn();
     Object.defineProperty(window, 'innerHeight', {
       writable: true,

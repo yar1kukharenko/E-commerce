@@ -78,6 +78,7 @@ describe('Card component', () => {
   it('renders placeholder image on image error', () => {
     const { container } = render(<Card title={mockTitle} subtitle={mockSubtitle} images={[mockImageBroken]} />);
     const imgElement = container.querySelector('img');
+    // @ts-ignore
     fireEvent.error(imgElement);
     expect(imgElement).toHaveAttribute('src', CONFIG.PLACEHOLDERIMAGE);
   });

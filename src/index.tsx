@@ -8,8 +8,8 @@ import '@config/configureMobX';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <Router.BrowserRouter>
+    <Router.HashRouter>
       <App />
-    </Router.BrowserRouter>
+    </Router.HashRouter>
   </React.StrictMode>,
 );

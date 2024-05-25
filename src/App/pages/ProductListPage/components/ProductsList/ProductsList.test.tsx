@@ -70,6 +70,7 @@ describe('ProductsList component', () => {
   });
 
   it('shows loader when loading', () => {
+    // @ts-ignore
     productListStore.getRequestState.isLoading = true;
     const { container } = render(
       <MemoryRouter>
@@ -81,6 +82,7 @@ describe('ProductsList component', () => {
   });
 
   it('shows error message when there is an error', () => {
+    // @ts-ignore
     productListStore.isError = true;
     const { getByText } = render(
       <MemoryRouter>
@@ -92,6 +94,7 @@ describe('ProductsList component', () => {
   });
 
   it('shows no results message when nothing is found', () => {
+    // @ts-ignore
     productListStore.isNothingFound = true;
     const { getByText } = render(
       <MemoryRouter>
@@ -103,6 +106,7 @@ describe('ProductsList component', () => {
   });
 
   it('shows end of products message when end is reached', () => {
+    // @ts-ignore
     productListStore.isEndOfProducts = true;
     const { getByText } = render(
       <MemoryRouter>
